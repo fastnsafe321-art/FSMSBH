@@ -1,0 +1,78 @@
+{
+  "entities": {
+    "Consultation": {
+      "title": "Consultation",
+      "description": "User requested technical consultation or quotation for a sports construction / contracting project.",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Full name of the client requesting the quote"
+        },
+        "company": {
+          "type": "string",
+          "description": "Company or club organization name"
+        },
+        "phone": {
+          "type": "string",
+          "description": "Contact phone number"
+        },
+        "email": {
+          "type": "string",
+          "description": "Customer contact email address"
+        },
+        "location": {
+          "type": "string",
+          "description": "Bahrain region or site location of the project"
+        },
+        "timeline": {
+          "type": "string",
+          "description": "Project execution timeline"
+        },
+        "contactMethod": {
+          "type": "string",
+          "description": "Preferred communication medium (e.g., WhatsApp, Phone Call, Email Channel)"
+        },
+        "message": {
+          "type": "string",
+          "description": "Brief project specifications or site dimensions"
+        },
+        "service": {
+          "type": "string",
+          "description": "Name of the requested service or business activity"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of creation"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "contacted", "completed"],
+          "description": "Lead pipeline status representation"
+        },
+        "ticket": {
+          "type": "string",
+          "description": "Generated tracking ticket code (e.g. FS-Q-2026-X)"
+        }
+      },
+      "required": [
+        "name",
+        "phone",
+        "location",
+        "timeline",
+        "contactMethod",
+        "service",
+        "createdAt",
+        "status",
+        "ticket"
+      ]
+    }
+  },
+  "firestore": {
+    "consultations/{consultationId}": {
+      "schema": "Consultation",
+      "description": "Form entries of consultation requests submitted by clients in Bahrain"
+    }
+  }
+}

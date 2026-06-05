@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Validation for consultation submissions
+    function isValidConsultation(data) {
+      return ('name' in data) && (data['name'] is string && data['name'].size() > 0 && data['name'].size() <= 150)
+          && ('phone' in data) && (data['phone'] is string && data['phone'].size() > 0 && data['phone'].size() <= 50)
+          && ('location' in data) && (data['location'] is string && data['location'].size() > 0 && data['location'].size() <= 100)
+          && ('timeline' in data) && (data['timeline'] is string && data['timeline'].size() > 0 && data['timeline'].size() <= 100)
+          && ('contactMethod' in data) && (data['contactMethod'] is string && data['contactMethod'].size() > 0 && data['contactMethod'].size() <= 100)
+          && ('service' in data) && (data['service'] is string && data['service'].size() > 0 && data['service'].size() <= 100)
+          && ('status' in data) && (data['status'] == 'pending')
+          && ('ticket' in data) && (data['ticket'] is string && data['ticket'].size() > 0 && data['ticket'].size() <= 50)
+          && ('createdAt' in data) && (data['createdAt'] == request.time)
+          && (!('email' in data) || (data['email'] is string && data['email'].size() <= 150))
+          && (!('company' in data) || (data['company'] is string && data['company'].size() <= 150))
+          && (!('message' in data) || (data['message'] is string && data['message'].size() <= 2000))
+          && data.keys().size() >= 9 && data.keys().size() <= 12;
+    }
+
+    match /consultations/{consultationId} {
+      allow create: if consultationId is string && consultationId.size() <= 128 && isValidConsultation(request.resource.data);
+      allow read, update, delete: if false;
+    }
+  }
+}
