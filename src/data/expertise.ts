@@ -1,7 +1,12 @@
-import { Layers, Sprout, Shield, Building, RotateCw, Waves } from 'lucide-react';
+import { Layers, Sprout, Shield, Building, Hammer, RotateCw, Waves } from 'lucide-react';
+import { Expertise } from '../types';
 
-export const EXPERTISE = [ 
-    { 
+/**
+ * Expertise/Service categories data
+ * Contains detailed information about each service offering
+ */
+export const EXPERTISE: Expertise[] = [
+  { 
     name: 'ARTIFICIAL GRASS INSTALLATION', 
     icon: Layers,
     image: '/src/assets/images/artificial_turf_macro_1779106602495.png', 
@@ -55,49 +60,27 @@ export const EXPERTISE = [
         image: "/src/assets/images/artificial_turf_step6_infill_marking_blurred_1779791544054.png"
       }
     ],
-    caseStudies: [
-      {
-        title: 'Hoora Youth Centre (Football)',
-        result: 'Installed 12,000sqm of premium turf, reducing maintenance costs by 60%.'
-      },
-      {
-        title: 'Bahrain School - Juffair',
-        result: 'Designed a high-usage student field with advanced impact attenuation.'
-      },
-      {
-        title: 'Professional Turf Carpet Laying',
-        desc: 'Precision unrolling, cutting, and geometric alignment of artificial grass carpet rolls to form a perfectly continuous playing surface.',
-        result: 'Seamless layout and precise alignment of carpet rolls.',
-        image: '/src/assets/images/artificial_turf_step5_turf_laying_blurred_1779791529058.png'
-      },
-      {
-        title: 'Technical Infill & Seam Integrity',
-        desc: 'Rigorous digital depth gauge calibration and certified seam integrity auditing to ensure precise 45mm infill depth and bulletproof seam seals.',
-        result: 'Achieved 45mm precise infill depth with verified Seam Integrity.',
-        image: '/src/assets/images/artificial_turf_step6_infill_marking_blurred_1779791544054.png'
-      }
-    ],
+    caseStudies: [],
     gallery: [
-      '/src/assets/images/stadium_floodlights_1779107777323.png',
+      '/src/assets/images/artificial_turf_step1_excavation_blurred_1779791458406.png',
+      '/src/assets/images/artificial_turf_step2_base_layer_blurred_1779791479525.png',
+      '/src/assets/images/artificial_turf_step3_compaction_blurred_1779791496550.png',
+      '/src/assets/images/artificial_turf_step4_shock_pad_blurred_1779791511331.png',
       '/src/assets/images/artificial_turf_step5_turf_laying_blurred_1779791529058.png',
       '/src/assets/images/artificial_turf_step6_infill_marking_blurred_1779791544054.png',
+      '/src/assets/images/artificial_turf_brushing_1779108281366.png',
       '/src/assets/images/artificial_turf_seam_detail_1779108263687.png',
-      '/src/assets/images/artificial_turf_macro_1779106602495.png',
-      '/src/assets/images/artificial_turf_step3_compaction_blurred_1779791496550.png',
-      '/src/assets/images/hero_stadium_turf_1779106585425.png',
-      '/src/assets/images/bahrain_fifa_stadium_1779283699621.png',
-      '/src/assets/images/sub_pitch_aeration_1779789441283.png',
-      '/src/assets/images/riffa_putting_green_1779283737960.png'
+      '/src/assets/images/artificial_turf_macro_1779106602495.png'
     ]
   },
   { 
     name: 'NATURAL GRASS INSTALLATION', 
     icon: Sprout,
-    image: '/src/assets/images/hero_stadium_turf_1779106585425.png', 
+    image: '/src/assets/images/irrigated_sports_pitch_1779108101974.png', 
     desc: 'Top-tier natural turf solutions for professional pitches.',
     detailedDesc: 'Specializing in professional sports turf management, we provide highest-grade natural grass installation including soil analysis, irrigation design, and laser-guided leveling for elite competition surfaces.',
     features: [
-      'Bermuda & Paspalum Hybrid Cultivars',
+      'Bermuda Hybrid Cultivars',
       'Laser-Guided Leveling & Grading',
       'Smart Automatic Irrigation Systems',
       'Scientific Soil & Nutrient Profiling',
@@ -132,19 +115,19 @@ export const EXPERTISE = [
         step: "05",
         title: "Turf Laying",
         desc: "Unrolling certified premium natural grass turf rolls/sod tightly to avoid gaps and promote quick rooting.",
-        image: "/src/assets/images/natural_grass_step5_turf_1779792898400.png"
+        image: "/src/assets/images/natural_sod_clean_blurred_workers_installation_1781170765388.png"
       },
       {
         step: "06",
         title: "Sod Rolling",
         desc: "Rolling the new turf with calibrated rollers to eliminate air pockets and guarantee absolute contact between sod and soil.",
-        image: "/src/assets/images/natural_grass_step6_roll_1779792913071.png"
+        image: "/src/assets/images/natural_sod_workers_rolling_1781170444539.png"
       },
       {
         step: "07",
         title: "Immersive Watering",
         desc: "Thorough deep watering to help the grass settle, hydrate roots, and firmly seal the hybrid system base.",
-        image: "/src/assets/images/natural_grass_step7_watr_1779792931008.png"
+        image: "/src/assets/images/natural_sod_watering_pro_1781170472132.png"
       },
       {
         step: "08",
@@ -153,22 +136,13 @@ export const EXPERTISE = [
         image: "/src/assets/images/natural_grass_step8_maint_1779792948164.png"
       }
     ],
-    caseStudies: [
-      {
-        title: 'Premier League Stadium Pitch',
-        result: 'Achieved 98% turf density in 6 weeks with sub-surface aeration.'
-      },
-      {
-        title: 'Private Estate Landscape',
-        result: 'Implemented low-water hybrid grass for harsh desert conditions.'
-      }
-    ],
+    caseStudies: [],
     gallery: [
-      '/src/assets/images/natural_grass_step5_turf_1779792898400.png',
-      '/src/assets/images/natural_grass_step7_watr_1779792931008.png',
+      '/src/assets/images/natural_sod_clean_blurred_workers_installation_1781170765388.png',
+      '/src/assets/images/natural_sod_watering_pro_1781170472132.png',
       '/src/assets/images/natural_grass_step8_maint_1779792948164.png',
-      '/src/assets/images/natural_grass_step6_roll_1779792913071.png',
-      '/src/assets/images/hero_stadium_turf_1779106585425.png',
+      '/src/assets/images/natural_sod_workers_rolling_1781170444539.png',
+      '/src/assets/images/irrigated_sports_pitch_1779108101974.png',
       '/src/assets/images/drainage_trench_blurred_1779790511693.png'
     ]
   },
@@ -192,7 +166,8 @@ export const EXPERTISE = [
       },
       {
         title: 'City Sports Complex Netting',
-        desc: 'Installed 12m high retractable safety nets for multi-sport use.'
+        desc: 'Installed 12m high retractable safety nets for multi-sport use.',
+        result: 'Enhanced spectator and athlete safety.'
       }
     ],
     gallery: [
@@ -247,16 +222,7 @@ export const EXPERTISE = [
       'Custom Galvanized Guard Rails',
       'Emergency Stop & Safety Sensors'
     ],
-    caseStudies: [
-      {
-        title: 'Royal Stables Refurbishment',
-        result: 'Installed 4 automated walkers with custom desert-grade shielding.'
-      },
-      {
-        title: 'Equestrian Center Expansion',
-        result: 'Integrated walker control systems with central farm management.'
-      }
-    ],
+    caseStudies: [],
     gallery: [
       '/src/assets/images/bahrain_horse_walker_1779781871906.png',
       '/src/assets/images/horse_walker_paddock_horses_1779108052144.png',
@@ -296,6 +262,56 @@ export const EXPERTISE = [
       '/src/assets/images/swimming_pool_pumps_room_1779108424776.png',
       '/src/assets/images/completed_infinity_pool_night_1779108439524.png',
       '/src/assets/images/pool_tiling_process_detail_1779112845511.png'
+    ]
+  },
+  { 
+    name: 'CARPENTRY & WOOD WORKS', 
+    icon: Hammer,
+    image: '/src/assets/images/Img 1.jpg', 
+    desc: 'High-end custom woodwork and precision carpentry installations.',
+    detailedDesc: 'Our custom carpentry and woodwork division provides high-durability timber structures, deckings, structural frameworks, and bespoke wood details for equestrian, residential, and commercial complexes.',
+    features: [
+      'Bespoke Timber Joinery & Decking',
+      'Structural Wood Framing & Roof Trusses',
+      'Custom Stables & Paddock Woodworks',
+      'Highly Durable Weatherproof Sealants',
+      'Premium Kiln-Dried Hardwood Selection'
+    ],
+    installationSteps: [
+      {
+        step: "01",
+        title: "Precision Measurement",
+        desc: "Accurate physical site surveying and material optimization templates.",
+        image: "/src/assets/images/carpentry_step1_measurement_1779793696843.png"
+      },
+      {
+        step: "02",
+        title: "Digital Design & Prep",
+        desc: "Transforming technical blueprints into exact structural woodwork patterns.",
+        image: "/src/assets/images/carpentry_step2_design_1779793721487.png"
+      },
+      {
+        step: "03",
+        title: "Material Selection",
+        desc: "Selecting the highest grade of weatherproof and high-density timber material.",
+        image: "/src/assets/images/carpentry_step3_materials_1779793737448.png"
+      }
+    ],
+    gallery: [
+      '/src/assets/images/Img 1.jpg',
+      '/src/assets/images/Img 2.png',
+      '/src/assets/images/image 3.png',
+      '/src/assets/images/img 4.png',
+      '/src/assets/images/imag 5.png',
+      '/src/assets/images/img 6.png',
+      '/src/assets/images/img 7.png',
+      '/src/assets/images/img 8.png',
+      '/src/assets/images/img  12.png',
+      '/src/assets/images/carpentry_workshop_machinery_1779107547457.png',
+      '/src/assets/images/carpentry_cnc_machine_1779108036737.png',
+      '/src/assets/images/carpentry_custom_furniture_1779108464249.png',
+      '/src/assets/images/carpentry_sanding_process_1779108479778.png',
+      '/src/assets/images/gym_interior_woodwork_1779107757792.png'
     ]
   },
 ];

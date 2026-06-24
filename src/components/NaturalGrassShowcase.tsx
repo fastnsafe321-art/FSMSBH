@@ -102,32 +102,32 @@ export default function NaturalGrassShowcase({ getImgUrl = (path) => path || '' 
     {
       num: 1,
       name: 'Natural Grass',
-      desc: 'Certified elite sports turf cultivars (such as Bermuda or Paspalum hybrid) giving premium tactile ball physics and superior player safety.'
+      desc: 'Certified elite warm-season sports turf cultivars engineered for exceptional heat resilience, superior turf density, and fast recovery.'
     },
     {
       num: 2,
-      name: 'Synthetic Fibres',
-      desc: 'Custom-engineered UV-stable synthetic yarns stitched up to 20cm deep into the rootzone, forming an unbreakable anchor for roots.'
+      name: 'Hybrid Reinforcement',
+      desc: 'Specialized high-strength vertical synthetic fibers stitched up to 200mm deep, physically anchoring the grass roots for a zero-divot athletic field.'
     },
     {
       num: 3,
-      name: 'Infill (Sand & Organic)',
-      desc: 'A tailored blend of angular quartz sand and premium organic matter to support upright fiber positioning and keep turf resilient.'
+      name: 'USGA Sand Root Zone (150 mm)',
+      desc: 'An engineered 150mm premium athletic sand zone conforming strictly to USGA physical criteria to guarantee optimal permeability and continuous root respiration.'
     },
     {
       num: 4,
-      name: 'Rootzone (Sand-Based)',
-      desc: 'A dense 100-150mm engineering sandy zone permitting optimal aeration and rapid deep root-system anchoring.'
+      name: 'Sub-Air Ventilation System',
+      desc: 'Under-soil forced-air blowers and vacuum network managing sub-surface root moisture, ambient oxygen flow, and extreme soil temperature cooling.'
     },
     {
       num: 5,
-      name: 'Drainage Layer',
-      desc: 'Active gravel network allowing moisture to pass through instantly, eliminating vertical water stagnation.'
+      name: 'Automatic Irrigation with Moisture Sensors',
+      desc: 'Smart moisture-balanced multi-depth monitoring decoders controlling highly localized, high-efficiency automatic pop-up sprinkler networks.'
     },
     {
       num: 6,
-      name: 'Sub-Base & Sub-Air Grid',
-      desc: 'Sub-base rock foundation containing integrated high-tech aeration drainage pipes connected to custom active blowers.'
+      name: 'Gravel Drainage Blanket and Perforated Pipes',
+      desc: 'A structural porous aggregate stone blanket housing highly responsive lateral and main HDPE perforated water collector loops.'
     }
   ];
 
@@ -154,74 +154,7 @@ export default function NaturalGrassShowcase({ getImgUrl = (path) => path || '' 
     }
   ];
 
-  const [activeExplorerTab, setActiveExplorerTab] = useState<string>('summary');
 
-  const explorerTabs = [
-    {
-      id: 'summary',
-      label: 'System Summary',
-      icon: Layers,
-      caption: 'Sizing & Hydraulic Quantities',
-      title: 'FIFA Size 105m x 68m Sizing System',
-      description: 'The system contains exactly 14 lateral Ø160mm perforated pipes running the full width, connected to twin primary lateral collector manifolds and discharging to an end-point chamber.',
-      specs: [
-        { label: 'Pitch Area', value: '7,140 m²' },
-        { label: 'Lateral Spacing', value: '5.0 m C/C' },
-        { label: 'Total lateral lines', value: '14 Lines (1,470m)' },
-        { label: 'Manifold Size', value: 'Ø450 mm HDPE' },
-        { label: 'Collector Pipes', value: 'Ø250 mm (210m)' },
-        { label: 'Inspection Risers', value: '56 Nos (Every 25m)' }
-      ]
-    },
-    {
-      id: 'airflow',
-      label: 'Air Requirements',
-      icon: Wind,
-      caption: 'CFM Blower Fan Sizing',
-      title: 'Active Force Ventilation - CFM Requirements',
-      description: 'Active airflow calculations are based on drawing 4 to 6 CFM per square foot. Our engine layout employs dual heavy duty fans offering active duty-standby backup capabilities.',
-      specs: [
-        { label: 'Total Pitch Area', value: '76,854 ft²' },
-        { label: 'Recommended Flow', value: '5 CFM/ft²' },
-        { label: 'Required CFM', value: '385,000 CFM' },
-        { label: 'Power Fans', value: '2 x 200k CFM' },
-        { label: 'Fan Control', value: 'VFD & PLC Panels' },
-        { label: 'Air Volume', value: '400,000 CFM Total' }
-      ]
-    },
-    {
-      id: 'dimensions',
-      label: 'Piping & Materials',
-      icon: Sprout,
-      caption: 'Lateral & Manifold Diameters',
-      title: 'Underground Pipes & Soil Specifications',
-      description: 'Heavy duty HDPE SDR17 lines with customized perforation profiles are mapped. Dual butt-fusion joints prevent fluid leaks and maintain precise air suction levels below pressure lines.',
-      specs: [
-        { label: 'Rootzone Sandy Base', value: '300 to 350 mm' },
-        { label: 'Gravel Filter', value: '100 to 150 mm' },
-        { label: 'Laterals Perf.', value: '8 mm holes (120°)' },
-        { label: 'Lateral Material', value: 'HDPE SDR17' },
-        { label: 'Collector Joints', value: 'Butt Electrofusion' },
-        { label: 'Installation Depth', value: '600 to 650 mm' }
-      ]
-    },
-    {
-      id: 'budget',
-      label: 'BHD Investment Breakdown',
-      icon: CheckCircle2,
-      caption: 'Budget BOQ Estimations',
-      title: 'Standard Package & FIFA Quality BOQ',
-      description: 'Comprehensive site works, excavation, sub-base gravel laying, HDPE conduits fitting, automatic control chamber build, commissioning, and remote field telemetry integrations.',
-      specs: [
-        { label: 'Est Civil & Pipes', value: 'BHD 210K - 240K' },
-        { label: 'Premium Package', value: 'BHD 450K - 650K' },
-        { label: 'Pumps & Chambers', value: 'BHD 30,000' },
-        { label: 'Fans & Control VFD', value: 'BHD 65,000' },
-        { label: 'Heating & Cooling', value: 'Fully Integrated' },
-        { label: 'Smart Sensors', value: 'Soil Moisture + Weather' }
-      ]
-    }
-  ];
 
   return (
     <div className="space-y-24">
@@ -290,7 +223,7 @@ export default function NaturalGrassShowcase({ getImgUrl = (path) => path || '' 
           <div className="relative w-full max-w-2xl bg-white rounded-3xl p-4 md:p-6 border border-gray-150 shadow-md group">
             <div className="relative overflow-hidden rounded-2xl aspect-[4/3] bg-gray-100 flex items-center justify-center">
               <img
-                src={getImgUrl('/src/assets/images/hybrid_grass_system_1779106617630.png')}
+                src={getImgUrl('/src/assets/images/hybrid_soil_block_clone_1781513567584.jpg')}
                 alt="FS-Grass Hybrid Grass System Diagram"
                 referrerPolicy="no-referrer"
                 className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-[1.02]"
@@ -587,153 +520,7 @@ export default function NaturalGrassShowcase({ getImgUrl = (path) => path || '' 
         </div>
       </section>
 
-      {/* Engineering Layout & Specifications Section */}
-      <section className="space-y-12">
-        <div className="text-center max-w-3xl mx-auto space-y-4">
-          <span className="text-[#36B649] text-xs font-bold tracking-[0.3em] uppercase block">
-            System Layout & Specifications
-          </span>
-          <h3 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight leading-none uppercase">
-            FIFA Standard 105m x 68m Blueprint
-          </h3>
-          <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-            Take a deep structural look into our certified municipal under-pitch design. This dynamic dashboard reveals pipe configurations, soil profile depths, air requirements, and investment breakdowns.
-          </p>
-        </div>
 
-        {/* Blueprint Explorer */}
-        <div className="bg-gray-900 rounded-[40px] border border-gray-800 p-6 md:p-10 shadow-2xl text-white">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            
-            {/* Left Column: Interactive Tabbed Panel (Control Engine) */}
-            <div className="lg:col-span-4 space-y-6 flex flex-col justify-between">
-              <div className="space-y-4">
-                <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-[#36B649] block">
-                  Interactive Specifications
-                </span>
-                <h4 className="text-xl md:text-2xl font-black tracking-tight uppercase leading-tight">
-                  Under-pitch Blueprint Specs
-                </h4>
-                <p className="text-gray-400 text-xs leading-relaxed">
-                  Select a category to inspect the underlying mechanical components, technical sizing, and estimated budget items shown in the engineering schema.
-                </p>
-              </div>
-
-              {/* Navigation Action Sidebar */}
-              <div className="space-y-3">
-                {explorerTabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveExplorerTab(tab.id)}
-                    className={`w-full text-left p-4 rounded-2xl border transition-all flex items-center gap-4 bg-gray-950/45 ${
-                      activeExplorerTab === tab.id
-                        ? 'border-[#36B649] bg-gray-950/90 shadow-md'
-                        : 'border-gray-800 hover:border-[#36B649]/40 hover:bg-gray-950'
-                    } group`}
-                  >
-                    <div className={`w-10 h-10 rounded-xl bg-gray-900 border border-gray-800 flex items-center justify-center transition-colors ${
-                      activeExplorerTab === tab.id ? 'text-[#36B649] bg-[#36B649]/10 border-[#36B649]/20' : 'text-gray-400 group-hover:text-[#36B649]'
-                    }`}>
-                      <tab.icon size={20} />
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold uppercase tracking-wider text-gray-200 group-hover:text-white">
-                        {tab.label}
-                      </div>
-                      <div className="text-[10px] text-gray-500 uppercase tracking-widest leading-none mt-1">
-                        {tab.caption}
-                      </div>
-                    </div>
-                  </button>
-                ))}
-              </div>
-
-              {/* Note */}
-              <div className="text-[10px] text-gray-500 border-t border-gray-850 pt-4 leading-relaxed">
-                * Our drawings strictly adhere to FIFA Pitch Dimensions & quality standards for Elite regional Bahrain football field systems.
-              </div>
-            </div>
-
-            {/* Middle/Right Column: Image Viewer with Blueprint overlays and specifications output */}
-            <div className="lg:col-span-8 flex flex-col space-y-6">
-              {/* Explorer Tab Consumer State */}
-              <div className="relative bg-gray-950 rounded-3xl p-4 md:p-6 border border-gray-850 flex flex-col md:flex-row gap-6">
-                
-                {/* Information Details Side Box */}
-                <div className="md:w-1/2 flex flex-col justify-between space-y-4">
-                  <div className="space-y-2">
-                    <span className="text-[9px] font-mono tracking-widest text-[#36B649] uppercase">
-                      Engineering Sub-Base Spec Sheet
-                    </span>
-                    <h5 className="text-lg font-black text-gray-100 uppercase tracking-tight">
-                      {explorerTabs.find(t => t.id === activeExplorerTab)?.title}
-                    </h5>
-                    <p className="text-gray-400 text-xs leading-relaxed">
-                      {explorerTabs.find(t => t.id === activeExplorerTab)?.description}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-y-4 gap-x-3 bg-gray-900 border border-gray-850 p-4 rounded-2xl">
-                    {explorerTabs.find(t => t.id === activeExplorerTab)?.specs.map((spec, i) => (
-                      <div key={i} className="space-y-0.5">
-                        <div className="text-[9px] text-gray-500 uppercase">{spec.label}</div>
-                        <div className="text-sm font-bold text-white font-mono">{spec.value}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Right Area: Schematic Diagram container */}
-                <div className="md:w-1/2 bg-gray-900 rounded-2xl border border-gray-850 overflow-hidden relative group p-2 min-h-[220px] flex items-center justify-center">
-                  <img
-                    src={getImgUrl('/src/assets/images/engineering_dashboard_1779714357362.png')}
-                    alt="Sub-Air Layout Details Specifications Map"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-contain max-h-[280px] transition-transform duration-700 group-hover:scale-110"
-                  />
-                  
-                  {/* High Tech Magnifier Glass Hint Overlay */}
-                  <div className="absolute inset-x-0 bottom-3 text-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="inline-block bg-black/95 text-[9px] text-gray-300 border border-gray-800 font-mono tracking-widest uppercase px-3 py-1 rounded-full shadow-lg">
-                      🔬 Click or Hover to enlarge document details
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Technical Specifications Blueprint Image Row (Full Width detailed display) */}
-              <div className="relative rounded-3xl overflow-hidden border border-gray-850 bg-gray-950 p-2 group shadow-inner">
-                <div className="absolute top-4 left-4 z-10">
-                  <span className="text-[9px] text-white bg-gray-900 border border-gray-800 px-3 py-1 font-bold tracking-widest uppercase rounded-full inline-block shadow-md font-mono">
-                    Technical Drawing: FIFA-105x68-SA
-                  </span>
-                </div>
-                
-                <div className="overflow-hidden rounded-2xl aspect-video relative">
-                  <img
-                    src={getImgUrl('/src/assets/images/engineering_dashboard_1779714357362.png')}
-                    alt="Active Sub-Air System Design Specifications Map"
-                    referrerPolicy="no-referrer"
-                    className="w-full h-full object-contain transition-transform duration-1000 group-hover:scale-[1.03]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-gray-950/20 via-transparent to-transparent pointer-events-none"></div>
-                </div>
-
-                <div className="p-4 bg-gray-950 flex flex-col sm:flex-row justify-between items-center text-[10px] text-gray-500 uppercase tracking-widest border-t border-t-gray-900 font-mono">
-                  <span>© FS-Grass® Sports Turf Technologies. All engineering rights reserved.</span>
-                  <span className="flex items-center gap-1.5 text-[#36B649] font-bold mt-2 sm:mt-0">
-                    <span className="w-2 h-2 rounded-full bg-[#36B649] animate-ping"></span>
-                    Ready for Bahrain Municipal Tenders
-                  </span>
-                </div>
-              </div>
-
-            </div>
-
-          </div>
-        </div>
-      </section>
     </div>
   );
 }

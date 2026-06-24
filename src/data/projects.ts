@@ -1,15 +1,21 @@
-export const PROJECTS = [ 
-    {
+import { Project } from '../types';
+
+/**
+ * Featured Projects Portfolio
+ * Showcases completed reference projects
+ */
+export const PROJECTS: Project[] = [
+  {
     id: 1,
     title: "Hoora Youth Centre",
     category: "Athletic Facilities",
     desc: "Construction of 2 Football Field Grounds and Services Building at Hoora. A centerpiece for community sports development.",
-    image: "/src/assets/images/hero_stadium_turf_1779106585425.png",
+    image: "/src/assets/images/irrigated_sports_pitch_1779108101974.png",
     client: "Ministry for Youth and Sports Affairs",
     year: "2019",
     details: "This project involved the complete site preparation, drainage installation, and professional turf laying for two full-sized pitches, along with a dedicated maintenance building.",
     gallery: [
-      "/src/assets/images/hero_stadium_turf_1779106585425.png",
+      "/src/assets/images/irrigated_sports_pitch_1779108101974.png",
       "/src/assets/images/bahrain_fifa_stadium_1779283699621.png"
     ]
   },
@@ -18,12 +24,15 @@ export const PROJECTS = [
     title: "North Sehla Youth Empowerment Center",
     category: "Turnkey Construction",
     desc: "A major turnkey project involving full construction from foundation to final fit-out.",
-    image: "/src/assets/images/sehla_center_eye_1779277752330.png",
+    image: "/src/assets/images/Front Elevation.png",
     client: "Ministry of Youth Affairs",
     year: "2023",
-    details: "One of our most significant turnkey contracts, covering civil works, structural concrete, interior design, and specialized sports facility implementation.",
+    details: "One of our most significant turnkey contracts, covering civil works, structural concrete, interior design, specialized sports facilities, and high-contrast architectural drawings.",
     gallery: [
-      "/src/assets/images/sehla_center_eye_1779277752330.png",
+      "/src/assets/images/Front Elevation.png",
+      "/src/assets/images/Left Elevation.png",
+      "/src/assets/images/Night Vision 1.png",
+      "/src/assets/images/Night Vision 2.png",
       "/src/assets/images/building_construction_site_1779107581243.png"
     ]
   },
@@ -66,25 +75,19 @@ export const PROJECTS = [
     details: "Designed to handle high daily usage while maintaining optimal safety and impact attenuation for students.",
     gallery: [
       "/src/assets/images/artificial_turf_macro_1779106602495.png",
-      "/src/assets/images/riffa_putting_green_1779283737960.png"
+      "/src/assets/images/riffa_putting_green_1779283737960.png",
+      "/src/assets/images/turf_installation_workers_1779107984530.png",
+      "/src/assets/images/turf_installation_detail_1779112799699.png",
+      "/src/assets/images/amwaj_padel_court_1779283719650.png",
+      "/src/assets/images/artificial_turf_brushing_1779108281366.png",
+      "/src/assets/images/artificial_turf_seam_detail_1779108263687.png",
+      "/src/assets/images/Img 9.png",
+      "/src/assets/images/img 10.png",
+      "/src/assets/images/img 11.png"
     ]
   },
   {
     id: 6,
-    title: "Malkiya Club",
-    category: "Professional Sports",
-    desc: "High-performance synthetic surface installation for pro-league football.",
-    image: "/src/assets/images/hybrid_stitching_machine_1779789250222.png",
-    client: "Malkiya Sports Club",
-    year: "2018",
-    details: "Implementation of professional-grade turf system optimized for high-intensity competition and televised matches.",
-    gallery: [
-      "/src/assets/images/hybrid_stitching_machine_1779789250222.png",
-      "/src/assets/images/sub_pitch_aeration_1779789441283.png"
-    ]
-  },
-  {
-    id: 7,
     title: "Amwaj Islands Resort Aquatic Project",
     category: "Aquatic Engineering",
     desc: "Turnkey design and structural concrete construction of high-end infinity edge pools.",
@@ -97,6 +100,22 @@ export const PROJECTS = [
       "/src/assets/images/pool_construction_site_1779107512639.png",
       "/src/assets/images/pool_tiling_detail_1779107736835.png",
       "/src/assets/images/swimming_pool_pumps_room_1779108424776.png"
+    ]
+  },
+  {
+    id: 7,
+    title: "Ma'ameer Club Sports Ground",
+    category: "Professional Sports",
+    desc: "Comprehensive installation of professional synthetic fields, safety containment netting, and field lighting.",
+    image: "/src/assets/images/Maamer 1.png",
+    client: "Ministry of Youth Affairs / Ma'ameer Sports Club",
+    year: "2024",
+    details: "A high-spec sports facility installation featuring certified advanced turf carpets, heavy-duty perimeter fencing, integrated sub-base drainage systems, and optimal high-frequency compaction.",
+    gallery: [
+      "/src/assets/images/Maamer 1.png",
+      "/src/assets/images/Maamer 2 .png",
+      "/src/assets/images/Maamer 3.png",
+      "/src/assets/images/Maamer 4.png"
     ]
   }
 ];

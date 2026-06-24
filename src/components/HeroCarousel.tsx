@@ -1,79 +1,76 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronLeft, ChevronRight, ArrowRight, Activity, Award, HelpCircle, Shield, ArrowRightLeft } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowRight, Activity, Award, HelpCircle, Shield, ArrowRightLeft, Layers, Sliders, RotateCw, Compass, Maximize2, Minimize2, Sparkles } from 'lucide-react';
 
 const HERO_SLIDES = [
   {
     id: 'slide-1',
-    image: '/src/assets/images/hero_stadium_turf_1779106585425.png',
-    tag: 'THE ENTIRE PROJECT. FROM A SINGLE SOURCE.',
-    titleFirstLine: 'POWERING MORE PLAY',
-    titleSecondLine: 'WITH ELITE SPORTS TURF',
-    description: 'Fast & Safe strictly manages the entire sports surface project lifecycle under one unified engineering framework—from initial soil test to manufacturing, construction, and certification.',
+    image: '/src/assets/images/pristine_pitch_night_1781166845895.png',
+    tag: 'KINGDOM OF BAHRAIN • ESTABLISHED 2010',
+    titleFirstLine: 'WE BUILD THE GROUNDS',
+    titleSecondLine: 'THE GAME IS PLAYED ON',
+    description: 'Fast & Safe Maintenance Services delivers elite sports facility construction across Bahrain — natural grass pitches, artificial turf, sports flooring and irrigation — built to specification and handed over match-ready.',
     bullets: [
-      { label: 'DESIGN & CONSULT', value: 'Bespoke drafting' },
-      { label: 'MANUFACTURE', value: 'Zero-heavy-metal fibers' },
-      { label: 'CONSTRUCT', value: 'Laser-guided precision' },
-      { label: 'SURFACING', value: 'Specialized geo-bonding' },
-      { label: 'MAINTAIN', value: 'Extend turf limit' }
+      { label: 'NATIONWIDE', value: '40+ Pitches Serviced' },
+      { label: 'FIELD DIMENSION', value: '105m × 68m Delivered' },
+      { label: 'EXPERIENCE', value: '16 Years in Bahrain' },
+      { label: 'APPROVED AGENCY', value: 'GSA Project Partner' }
     ],
     primaryBtn: {
-      text: 'EXPLORE OUR TECH',
-      targetId: 'project-cycle'
+      text: 'DISCUSS YOUR PROJECT',
+      targetId: 'contact'
     },
     secondaryBtn: {
-      text: 'GET TURNKEY SOLUTION',
-      service: 'Other / Turnkey Project',
-      message: 'I am looking for a Turnkey sports field / general contracting engineering quote.'
+      text: 'FROM EXPERTISE',
+      targetId: 'expertise'
     }
   },
   {
     id: 'slide-2',
-    image: '/src/assets/images/bahrain_fifa_stadium_1779283699621.png',
-    tag: 'WORLD-CLASS SPORTS SURFACES',
-    titleFirstLine: 'ADVANCED ENGINEEERED',
-    titleSecondLine: 'HYBRID TURF SYTEMS',
-    description: 'Combining the beautiful tactile sensation and ball physics of natural grass with the structural integrity of synthetic turf. Designed and tailored to resist the intense heat of the Kingdom of Bahrain.',
+    image: '/src/assets/images/stadium_turf_night_pro_1781167905540.png',
+    tag: 'SURFACE ENGINEERING STANDARD',
+    titleFirstLine: 'HIGH-PERFORMANCE',
+    titleSecondLine: 'ARTIFICIAL TURF SYSTEMS',
+    description: 'Combining ultimate safety, realistic ball roll, and extreme durability against Bahrain’s marine atmospheric salinity and heavy summer peak temperatures.',
     bullets: [
-      { label: 'HYBRID STITCHING', value: '3x more playing hours' },
-      { label: 'SUB-SOIL AIR', value: 'Vacuum active drainage' },
-      { label: 'FIFA PRO SPECS', value: 'Standard ball bounce & roll' },
+      { label: 'PITCH DESIGN', value: 'FIFA Quality standards' },
+      { label: 'DRAINAGE', value: 'Sub-soil active runoff' },
+      { label: 'STRETCH STABILITY', value: 'Advanced backing grid' },
       { label: 'CLIMATE PROTECTION', value: 'Extreme UV defense' }
     ],
     primaryBtn: {
-      text: 'VIEW EXPERTISE',
-      targetId: 'expertise'
+      text: 'GET ESTIMATE',
+      targetId: 'contact'
     },
     secondaryBtn: {
-      text: 'INQUIRE HYBRID TURF',
-      service: 'ARTIFICIAL GRASS INSTALLATION',
-      message: 'I am interested in obtaining a quote and learning more about your FS-Grass® hybrid stitching sports pitch systems.'
+      text: 'VIEW SERVICES',
+      targetId: 'expertise'
     }
   },
   {
     id: 'slide-3',
-    image: '/src/assets/images/turf_installation_workers_1779107984530.png',
-    tag: 'TRUSTED BY THE SPORTS INDUSTRY',
-    titleFirstLine: 'PURSUING THE POSSIBLE',
-    titleSecondLine: 'THROUGH INTENSE HARDWORK',
-    description: 'From concrete pool structures and securing palisade boundary fences to world-class sports arenas, we complete projects on-schedule, with pristine engineering, and rigorous focus on safety loops.',
+    image: '/src/assets/images/natural_sod_clean_blurred_workers_installation_1781170765388.png',
+    tag: 'SPECIFICATION-LED PROCUREMENT',
+    titleFirstLine: 'FROM ROOTZONE',
+    titleSecondLine: 'TO FINAL LINE MARKING',
+    description: 'Premium certified sports turf installations. Sand-based rootzones, organic soil conditioning, and automated irrigation with water-conserving smart controllers.',
     bullets: [
-      { label: 'EST. 2010', value: '16 Years of Expertise' },
-      { label: 'HEADQUARTERS', value: 'Manama, Bahrain' },
-      { label: 'ZERO INCIDENT', value: 'OSHAS & ISO Compliance' },
-      { label: '100% RELIABLE', value: 'Owner-operated heavy fleets' }
+      { label: 'ROOTZONE', value: '350mm USGA Silica/Marine Sand' },
+      { label: 'AMENDMENT', value: '20% Peat Moss Moisture retention' },
+      { label: 'TOLERANCE', value: '±10mm laser-graded flatness' },
+      { label: 'MAINTENANCE', value: 'Full 12-Month Grow-In care' }
     ],
     primaryBtn: {
-      text: 'SEE RECENT PROJECTS',
-      targetId: 'portfolio'
+      text: 'INQUIRE NATURAL GRASS',
+      targetId: 'contact'
     },
     secondaryBtn: {
-      text: 'TALK TO AN ENGINEER',
-      service: 'Engineering Consultation',
-      message: 'I would like to arrange some technical sitework, custom drawings, or soil examination loops with your civil engineer.'
+      text: 'DISCOVER METHODOLOGY',
+      targetId: 'projects'
     }
   }
 ];
+
 
 interface HeroCarouselProps {
   getImgUrl: (path: string | undefined) => string;
@@ -120,39 +117,34 @@ export default function HeroCarousel({ getImgUrl, triggerConsultation }: HeroCar
       
       {/* Slide Image Background Layer with Zoom-Effect */}
       <div className="absolute inset-0 z-0">
-        <AnimatePresence mode="keepMounted">
-          {HERO_SLIDES.map((slide, idx) => {
-            if (idx !== currentSlideIdx) return null;
-            return (
-              <motion.div
-                key={slide.id}
-                initial={{ opacity: 0, scale: 1.15 }}
-                animate={{ opacity: 1.0, scale: 1.05 }}
-                exit={{ opacity: 0, scale: 1.0 }}
-                transition={{ duration: 1.4, ease: 'easeOut' }}
-                className="absolute inset-0"
-              >
-                <img
-                  src={getImgUrl(slide.image)}
-                  alt={slide.tag}
-                  className="w-full h-full object-cover select-none pointer-events-none"
-                />
-              </motion.div>
-            );
-          })}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeSlide.id}
+            initial={{ opacity: 0, scale: 1.15 }}
+            animate={{ opacity: 1.0, scale: 1.05 }}
+            exit={{ opacity: 0, scale: 1.0 }}
+            transition={{ duration: 1.4, ease: 'easeOut' }}
+            className="absolute inset-0 animate-fade-in"
+          >
+            <img
+              src={getImgUrl(activeSlide.image)}
+              alt={activeSlide.tag}
+              className="w-full h-full object-cover select-none pointer-events-none opacity-100 brightness-[1.08] contrast-[1.10] saturate-[1.15] filter-gpu"
+            />
+          </motion.div>
         </AnimatePresence>
         
-        {/* Dynamic Multi-layered overlay for optimal contrast */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/25 to-transparent z-0" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 z-0" />
+        {/* Dynamic Multi-layered overlay for optimal contrast - Lightened for absolute clarity */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-transparent to-black/15 z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-black/10 z-0 pointer-events-none" />
       </div>
 
       {/* Main Interactive Container */}
       <div className="container mx-auto px-6 lg:px-12 relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           
-          {/* Slide Text Content & Buttons (7 cols) */}
-          <div className="lg:col-span-8 flex flex-col justify-center">
+          {/* Slide Text Content & Buttons (Expanded beautifully after removing benchmarks side-rail) */}
+          <div className="lg:col-span-10 xl:col-span-9 flex flex-col justify-center">
             
             {/* Top Indicator / Slide Category Tag */}
             <div className="overflow-hidden mb-5">
@@ -202,7 +194,7 @@ export default function HeroCarousel({ getImgUrl, triggerConsultation }: HeroCar
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -45, opacity: 0 }}
                   transition={{ duration: 0.65, delay: 0.12, ease: 'easeOut' }}
-                  className="text-gray-200 text-base md:text-lg leading-relaxed font-light"
+                  className="text-gray-200 text-base md:text-lg leading-relaxed font-light shadow-sm"
                 >
                   {activeSlide.description}
                 </motion.p>
@@ -223,47 +215,16 @@ export default function HeroCarousel({ getImgUrl, triggerConsultation }: HeroCar
               </button>
 
               <button
-                onClick={() => triggerConsultation(activeSlide.secondaryBtn.service, activeSlide.secondaryBtn.message)}
+                onClick={() => {
+                  const el = document.getElementById(activeSlide.secondaryBtn.targetId);
+                  if (el) el.scrollIntoView({ behavior: 'smooth' });
+                }}
                 className="bg-transparent border border-white/30 text-white px-9 py-4 font-black text-xs tracking-[0.2em] hover:bg-white hover:text-black hover:border-white transition-all duration-300 flex items-center gap-3"
               >
                 <span>{activeSlide.secondaryBtn.text}</span>
               </button>
             </div>
 
-          </div>
-
-          {/* Quick Stats Grid Side-Rail (4 cols) - Hidden on mobile, beautiful on desktop */}
-          <div className="lg:col-span-4 hidden lg:block overflow-hidden">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeSlide.id}
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-                transition={{ duration: 0.6, delay: 0.15 }}
-                className="bg-black/40 backdrop-blur-md border border-white/10 rounded-3xl p-8 space-y-6"
-              >
-                <div className="border-b border-white/10 pb-4">
-                  <span className="text-[10px] font-black tracking-widest text-[#36B649] uppercase block mb-1">
-                    ENGINEERING BENCHMARKS
-                  </span>
-                  <div className="text-white text-lg font-bold uppercase tracking-tight">Focus Standards</div>
-                </div>
-
-                <div className="space-y-4">
-                  {activeSlide.bullets.map((bullet, bIdx) => (
-                    <div key={bIdx} className="flex justify-between items-center group/bullet border-b border-white/5 pb-2.5 last:border-0 last:pb-0">
-                      <span className="text-[11px] font-bold text-gray-400 tracking-wider group-hover/bullet:text-[#0083C9] transition-colors uppercase">
-                        {bullet.label}
-                      </span>
-                      <span className="text-xs font-mono font-medium text-white text-right">
-                        {bullet.value}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </motion.div>
-            </AnimatePresence>
           </div>
 
         </div>

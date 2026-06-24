@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Shield, 
@@ -19,12 +19,52 @@ import {
   Truck, 
   HeartHandshake,
   Menu,
-  Maximize2
+  Maximize2,
+  Camera,
+  RefreshCw
 } from 'lucide-react';
 
 interface FencingShowcaseProps {
   getImgUrl?: (path: string | undefined) => string;
 }
+
+// Compress Base64 Photo under target limits to ensure perfect performance & database payload size
+const compressImage = (base64Str: string, maxWidth = 800, maxHeight = 600): Promise<string> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.src = base64Str;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      if (width > height) {
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+      } else {
+        if (height > maxHeight) {
+          width = Math.round((width * maxHeight) / height);
+          height = maxHeight;
+        }
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', 0.55));
+      } else {
+        resolve(base64Str);
+      }
+    };
+    img.onerror = () => {
+      resolve(base64Str);
+    };
+  });
+};
 
 const APPLICATIONS = [
   {
@@ -245,7 +285,96 @@ const REASONS = [
 export default function FencingShowcase({ getImgUrl = (p) => p || '' }: FencingShowcaseProps) {
   const [activeTab, setActiveTab] = useState('football');
   
-  const currentApp = APPLICATIONS.find(a => a.id === activeTab) || APPLICATIONS[0];
+  const [applications, setApplications] = useState(() => {
+    try {
+      const saved = localStorage.getItem('fencing_custom_applications');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return APPLICATIONS.map(app => {
+            const savedApp = parsed.find((item: any) => item.id === app.id);
+            return savedApp ? { ...app, image: savedApp.image } : app;
+          });
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return APPLICATIONS;
+  });
+
+  const [steps, setSteps] = useState(() => {
+    try {
+      const saved = localStorage.getItem('fencing_custom_steps');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return STEPS.map(step => {
+            const savedStep = parsed.find((item: any) => item.step === step.step);
+            return savedStep ? { ...step, image: savedStep.image } : step;
+          });
+        }
+      }
+    } catch (e) {
+      console.error(e);
+    }
+    return STEPS;
+  });
+
+  const handleAppImageUpload = async (appId: string, event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        if (typeof reader.result === 'string') {
+          const compressed = await compressImage(reader.result, 800, 600);
+          const updated = applications.map(app => {
+            if (app.id === appId) {
+              return { ...app, image: compressed };
+            }
+            return app;
+          });
+          setApplications(updated);
+          // Save a light version stripping JSX Icon function
+          const dataToSave = updated.map(({ icon, ...rest }) => ({ ...rest }));
+          localStorage.setItem('fencing_custom_applications', JSON.stringify(dataToSave));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleStepImageUpload = async (stepNum: string, event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        if (typeof reader.result === 'string') {
+          const compressed = await compressImage(reader.result, 800, 600);
+          const updated = steps.map(step => {
+            if (step.step === stepNum) {
+              return { ...step, image: compressed };
+            }
+            return step;
+          });
+          setSteps(updated);
+          localStorage.setItem('fencing_custom_steps', JSON.stringify(updated));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const resetCustomImages = () => {
+    if (window.confirm("Are you sure you want to reset all custom fencing photos back to standard?")) {
+      localStorage.removeItem('fencing_custom_applications');
+      localStorage.removeItem('fencing_custom_steps');
+      setApplications(APPLICATIONS);
+      setSteps(STEPS);
+    }
+  };
+
+  const currentApp = applications.find(a => a.id === activeTab) || applications[0];
 
   return (
     <div className="space-y-24 bg-white rounded-3xl mt-12 p-1 border border-gray-100">
@@ -262,11 +391,22 @@ export default function FencingShowcase({ getImgUrl = (p) => p || '' }: FencingS
           <p className="text-sm text-gray-500 leading-relaxed font-medium">
             Certified perimeter solutions built to withstand Bahrain’s severe marine environments. From FIFA-standard stadium containment nets to anti-intrusion industrial security fencing.
           </p>
+          {(localStorage.getItem('fencing_custom_applications') || localStorage.getItem('fencing_custom_steps')) && (
+            <div className="pt-2">
+              <button
+                onClick={resetCustomImages}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[9px] font-bold tracking-widest text-red-600 bg-red-50 hover:bg-red-100 transition-colors uppercase border border-red-200"
+              >
+                <RefreshCw size={10} className="animate-spin-slow" />
+                <span>Reset Custom Fencing Photos</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Categories Tabs Selector */}
         <div className="flex flex-wrap justify-center gap-2 md:gap-3">
-          {APPLICATIONS.map((app) => {
+          {applications.map((app) => {
             const Icon = app.icon;
             const isActive = app.id === activeTab;
             
@@ -307,7 +447,7 @@ export default function FencingShowcase({ getImgUrl = (p) => p || '' }: FencingS
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent"></div>
-              
+
               <div className="absolute top-4 left-4 bg-white/95 backdrop-blur-md border border-gray-100 shadow-md px-3 py-1.5 rounded-full flex items-center gap-1.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-[#36B649]"></span>
                 <span className="text-[9px] font-bold text-gray-800 tracking-wider uppercase">Active Site Portfolio</span>
@@ -418,7 +558,7 @@ export default function FencingShowcase({ getImgUrl = (p) => p || '' }: FencingS
 
         {/* Step Cards Horizontal Scrolling or Wrap Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {STEPS.map((stepUnit, sIdx) => (
+          {steps.map((stepUnit, sIdx) => (
             <div 
               key={stepUnit.step}
               id={`fence-step-${stepUnit.step}`}
@@ -434,7 +574,7 @@ export default function FencingShowcase({ getImgUrl = (p) => p || '' }: FencingS
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent"></div>
-                  
+
                   {/* Step Code Badge */}
                   <div className="absolute top-3 left-3 bg-[#0083C9] text-white font-extrabold text-[11px] px-2.5 py-1 rounded-full shadow-md tracking-widest">
                     STAGE {stepUnit.step}
@@ -475,7 +615,7 @@ export default function FencingShowcase({ getImgUrl = (p) => p || '' }: FencingS
               Fencing Specifications
             </h4>
             <p className="text-xs text-gray-500 leading-relaxed">
-              Our steel units are manufactured, galvanized, and powder-coated to meet rigorous international ASTM standards.
+              Our steel units are fabricated, galvanized, and powder-coated to meet rigorous international ASTM standards.
             </p>
           </div>
 

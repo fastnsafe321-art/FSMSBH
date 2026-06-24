@@ -14,7 +14,7 @@ const NATURAL_SYSTEMS = [
     tagline: 'FS-Grass® Hybrid Stitching & Sub-Air Sub-base',
     icon: Cpu,
     color: '#36B649',
-    image: '/src/assets/images/hybrid_grass_system_1779106617630.png',
+    image: '/src/assets/images/hybrid_soil_block_clone_1781513567584.jpg',
     techSpecs: 'Combines elite certified natural grass with precision synthetic yarn stitching, fully integrated with Sub-Air active aeration.',
     description: 'Our premium Hybrid Stitching System pairs natural grass with custom-engineered vertical synthetic fiber reinforcement, built atop an active Sub-Air ventilation grid. This ensures perfect traction, extreme durability, and advanced moisture management.',
     benefits: [
@@ -137,7 +137,7 @@ const ARTIFICIAL_SYSTEMS = [
     tagline: 'Synthetic Dynamic Water Drainage',
     icon: Wind,
     color: '#0083C9',
-    image: '/src/assets/images/artificial_turf_seam_detail_1779108263687.png',
+    image: '/src/assets/images/elastic_sub_base_1781172457822.png',
     techSpecs: 'Sub-surface high-flow dynamic water transmission with geotextile filtration layers.',
     description: 'A dedicated gravel and dynamic base structure engineered for high-performance artificial grass. Combines specific sub-base slope grading with geonetted filtration grids so water never accumulates or creates low-level pooling on synthetic fibers.',
     benefits: [
@@ -161,27 +161,20 @@ const SINGLE_SOURCE_STEPS = [
   },
   {
     number: '02',
-    title: 'MANUFACTURE',
-    icon: Factory,
-    desc: 'In-house fiber formulation using premium polymer yarns. We strictly guarantee high-density resilience, UV defense, and ISO-tested endurance.',
-    detail: 'Our state-of-the-art partners manufacture the raw synthetic carpets utilizing zero-heavy-metal extrusion processes. We deliver unmatched color fastness, wear tolerance, and extreme friction safety.'
-  },
-  {
-    number: '03',
     title: 'CONSTRUCT & BASE',
     icon: Hammer,
     desc: 'Heavyduty site preparation, laser-guided grading, concrete works, and subbase civil engineering with OSHAS and ISO 45001 safety control.',
     detail: 'Our heavy excavation fleets perform multi-layer subbase packing, installing exact grading slopes, geosynthetic membranes, and premium porous stone layers for robust water disposal.'
   },
   {
-    number: '04',
+    number: '03',
     title: 'SURFACING & INSTALL',
     icon: Layers,
     desc: 'Expert unrolling, laser-guided carpet seam fusion, infill spreading, and FS-Grass® hybrid stitching machinery deployed on site.',
     detail: 'Our technical teams join seams with exact geo-bonded adhesive matrices. Specialized infill machines distribute kiln-dried quartz sand and elastic EPDM rubber granules within 1mm tolerances.'
   },
   {
-    number: '05',
+    number: '04',
     title: 'FASTSAFE MAINTAIN',
     icon: Hammer,
     desc: 'Comprehensive post-delivery support, premium custom laser-brushing, infill depth auditing, and structural field deep cleaning.',
@@ -212,10 +205,16 @@ export default function PremiumPitchesTech({ getImgUrl }: PremiumPitchesTechProp
   };
 
   return (
-    <section id="premium-pitches-tech" className="bg-zinc-950 text-white py-24 border-t border-b border-zinc-900 overflow-hidden relative">
-      {/* Background Visual Flair */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,131,201,0.06),transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(54,182,73,0.04),transparent_50%)]" />
+    <section className="bg-zinc-950 text-white py-24 border-t border-b border-zinc-900 overflow-hidden relative">
+      {/* Background Visual Backdrop Image */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center pointer-events-none opacity-[0.22]"
+        style={{ backgroundImage: `url(${resolveImg('/src/assets/images/sports_engineering_backdrop_1781171108769.png')})` }}
+      />
+      {/* Subtle vignettes and glow overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/45 to-zinc-950 opacity-80" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,131,201,0.08),transparent_60%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(54,182,73,0.05),transparent_60%)]" />
 
       <div className="container mx-auto px-6 lg:px-12 relative z-10 block">
         
@@ -471,12 +470,12 @@ export default function PremiumPitchesTech({ getImgUrl }: PremiumPitchesTechProp
               The Entire Project, <span className="text-[#0083C9]">From A Single Source</span>
             </h3>
             <p className="text-zinc-400 text-xs md:text-sm mt-3 leading-relaxed">
-              Fast & Safe strictly manages and integrates the entire sports surface project lifecycle under one unified engineering framework—from initial soil test and draft design files to manufacturing, construction, installation, and long-term certified deep cleans. No external contractors, complete OSHAS accountability.
+              Fast & Safe strictly manages and integrates the entire sports surface project lifecycle under one unified engineering framework—from initial soil test and draft design files to construction, installation, and long-term certified deep cleans. No external contractors, complete OSHAS accountability.
             </p>
           </div>
 
           {/* Steps Timeline Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 items-stretch">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-stretch">
             {SINGLE_SOURCE_STEPS.map((step, idx) => {
               const Icon = step.icon;
               const isActiveStep = activeStepIdx === idx;
