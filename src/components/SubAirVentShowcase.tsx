@@ -29,15 +29,11 @@ export default function SubAirVentShowcase({
   getImgUrl = (path) => path || '', 
   triggerConsultation 
 }: SubAirVentShowcaseProps) {
-  // Drive selection via interactive simulation modes: 'vacuum' | 'standby' | 'pressure'
   const [simMode, setSimMode] = useState<'vacuum' | 'standby' | 'pressure'>('vacuum');
-
-  // Drainage animation phase: 'all' | 'precipitation' | 'filtration' | 'suction' | 'discharge'
   const [activeDrainagePhase, setActiveDrainagePhase] = useState<'all' | 'precipitation' | 'filtration' | 'suction' | 'discharge'>('all');
   const [isPlayingFlow, setIsPlayingFlow] = useState<boolean>(true);
   const [viewType, setViewType] = useState<'3d' | 'schematic'>('3d');
 
-  // Audio Engine State & Refs
   const [soundEnabled, setSoundEnabled] = useState<boolean>(false);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const activeNodesRef = useRef<{
@@ -45,8 +41,7 @@ export default function SubAirVentShowcase({
     gainNode: GainNode | null;
     intervalId?: any;
   }>({ sourceNodes: [], gainNode: null });
-  // Place this near your other useRef declarations at the top of the component
-const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(null);
+  const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(null);
 
   // Auto-cycle drainage steps when playing
   useEffect(() => {
@@ -81,13 +76,9 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
       activeNodesRef.current.intervalId = undefined;
     }
 
-    // Snapshot the nodes to stop NOW before clearing the ref,
-    // so a subsequent initSoundStage can safely push new nodes immediately.
     const gainNode = activeNodesRef.current.gainNode;
     const sourceNodes = [...activeNodesRef.current.sourceNodes];
 
-    // Clear the ref immediately so new nodes started right after this call
-    // are never accidentally stopped by this cleanup.
     activeNodesRef.current.sourceNodes = [];
     activeNodesRef.current.gainNode = null;
 
@@ -95,13 +86,9 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
       try {
         gainNode.gain.setValueAtTime(gainNode.gain.value, audioCtxRef.current.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtxRef.current.currentTime + 0.08);
-      } catch (e) {
-        // Fallback if context is closing/closed
-      }
+      } catch (e) {}
     }
 
-    // Stop old nodes after a short fade — they are no longer in the ref
-    // so they cannot interfere with newly started nodes.
     setTimeout(() => {
       sourceNodes.forEach((node) => {
         try {
@@ -109,7 +96,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
           (node as any).disconnect?.();
         } catch (e) {}
       });
-      // Also disconnect the old gain node after its fade
       try { gainNode?.disconnect?.(); } catch (e) {}
     }, 90);
   };
@@ -124,52 +110,95 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
     return buffer;
   };
 
+  // ─── RAIN: exact v1 synthesis ───────────────────────────────────────────────
+  // Dual-path: lowpass-filtered noise body (0.32 gain) + LFO gain modulation
+  // (0.08 depth) + separate bandpass splatter branch (3200 Hz, 0.06 gain).
   const startRainSound = (ctx: AudioContext, targetGain: GainNode) => {
     const noise = ctx.createBufferSource();
     noise.buffer = createNoiseBuffer(ctx);
     noise.loop = true;
 
-    const filter1 = ctx.createBiquadFilter();
-    filter1.type = 'lowpass';
-    filter1.frequency.setValueAtTime(1200, ctx.currentTime);
+    // Main body: lowpass at 1100 Hz (matches v1 exactly)
+    const lowpassFilter = ctx.createBiquadFilter();
+    lowpassFilter.type = 'lowpass';
+    lowpassFilter.frequency.setValueAtTime(1100, ctx.currentTime);
 
-    const filter2 = ctx.createBiquadFilter();
-    filter2.type = 'bandpass';
-    filter2.frequency.setValueAtTime(800, ctx.currentTime);
-    filter2.Q.setValueAtTime(1, ctx.currentTime);
+    // LFO that modulates the main gain at 0.4 Hz with ±0.08 depth (v1 values)
+    const modulator = ctx.createOscillator();
+    modulator.type = 'sine';
+    modulator.frequency.setValueAtTime(0.4, ctx.currentTime);
+    const modGain = ctx.createGain();
+    modGain.gain.setValueAtTime(0.08, ctx.currentTime);
 
-    noise.connect(filter1);
-    filter1.connect(filter2);
-    filter2.connect(targetGain);
+    // Main gain: ramp up to 0.32 (v1 value)
+    const mainGain = ctx.createGain();
+    mainGain.gain.setValueAtTime(0, ctx.currentTime);
+    mainGain.gain.linearRampToValueAtTime(0.32, ctx.currentTime + 0.2);
+
+    modulator.connect(modGain);
+    modGain.connect(mainGain.gain);   // LFO drives the gain parameter
+
+    noise.connect(lowpassFilter);
+    lowpassFilter.connect(mainGain);
+    mainGain.connect(targetGain);
+
+    // Splatter branch: bandpass at 3200 Hz, Q=1.5, gain=0.06 (v1 values)
+    const bandpass = ctx.createBiquadFilter();
+    bandpass.type = 'bandpass';
+    bandpass.frequency.setValueAtTime(3200, ctx.currentTime);
+    bandpass.Q.setValueAtTime(1.5, ctx.currentTime);
+
+    const splatterGain = ctx.createGain();
+    splatterGain.gain.setValueAtTime(0.06, ctx.currentTime);
+
+    noise.connect(bandpass);
+    bandpass.connect(splatterGain);
+    splatterGain.connect(targetGain);
+
     noise.start();
-    activeNodesRef.current.sourceNodes.push(noise, filter1, filter2);
+    modulator.start();
+
+    activeNodesRef.current.sourceNodes.push(noise, modulator, lowpassFilter, modGain, bandpass, splatterGain);
   };
 
+  // ─── FILTRATION: exact v1 drip synthesis ────────────────────────────────────
+  // Oscillators (sine or triangle) at 1200–2600 Hz, duration 0.04–0.10 s,
+  // peak gain 0.12–0.27, freq ramp down to 45 %, interval 70–220 ms.
   const startFiltrationSound = (ctx: AudioContext, targetGain: GainNode) => {
-    const playDrip = () => {
+    const scheduleDrip = () => {
       if (!audioCtxRef.current || !soundEnabled) return;
-      
+
       const osc = ctx.createOscillator();
       const dripGain = ctx.createGain();
-      
-      osc.type = Math.random() > 0.5 ? 'sine' : 'triangle';
-      const baseFreq = 600 + Math.random() * 400;
-      osc.frequency.setValueAtTime(baseFreq, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(150, ctx.currentTime + 0.1);
 
-      dripGain.gain.setValueAtTime(0.05, ctx.currentTime);
-      dripGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.12);
+      const freq = 1200 + Math.random() * 1400;          // 1200–2600 Hz (v1)
+      const duration = 0.04 + Math.random() * 0.06;      // 40–100 ms (v1)
+
+      osc.type = Math.random() > 0.4 ? 'sine' : 'triangle';  // v1 ratio
+      osc.frequency.setValueAtTime(freq, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.45, ctx.currentTime + duration); // v1 pitch drop
+
+      dripGain.gain.setValueAtTime(0, ctx.currentTime);
+      dripGain.gain.linearRampToValueAtTime(0.12 + Math.random() * 0.15, ctx.currentTime + 0.01); // 0.12–0.27 (v1)
+      dripGain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
 
       osc.connect(dripGain);
       dripGain.connect(targetGain);
+
       osc.start();
-      osc.stop(ctx.currentTime + 0.15);
+      setTimeout(() => { try { osc.stop(); } catch (e) {} }, duration * 1000 + 100);
     };
 
-    playDrip();
-    activeNodesRef.current.intervalId = setInterval(playDrip, 250);
+    const triggerNext = () => {
+      scheduleDrip();
+      const delay = 70 + Math.random() * 150;            // 70–220 ms (v1)
+      activeNodesRef.current.intervalId = setTimeout(triggerNext, delay);
+    };
+
+    triggerNext();
   };
 
+  // ─── SUCTION: v2 implementation (unchanged) ──────────────────────────────────
   const startSuctionSound = (ctx: AudioContext, targetGain: GainNode) => {
     const osc1 = ctx.createOscillator();
     osc1.type = 'sawtooth';
@@ -199,6 +228,7 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
     activeNodesRef.current.sourceNodes.push(osc1, osc2, localGain1, localGain2, lowpass);
   };
 
+  // ─── DISCHARGE: v2 implementation (unchanged) ────────────────────────────────
   const startDischargeSound = (ctx: AudioContext, targetGain: GainNode) => {
     const noise = ctx.createBufferSource();
     noise.buffer = createNoiseBuffer(ctx);
@@ -223,6 +253,7 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
     activeNodesRef.current.sourceNodes.push(noise, filter, modulator, modGain);
   };
 
+  // ─── PRESSURE: v2 implementation (unchanged) ─────────────────────────────────
   const startPressureSound = (ctx: AudioContext, targetGain: GainNode) => {
     const noise = ctx.createBufferSource();
     noise.buffer = createNoiseBuffer(ctx);
@@ -248,6 +279,7 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
     activeNodesRef.current.sourceNodes.push(noise, bandpass, sweep, sweepGain);
   };
 
+  // ─── SOUND ENGINE EFFECT ─────────────────────────────────────────────────────
   useEffect(() => {
     if (!soundEnabled) {
       stopAllSounds();
@@ -255,14 +287,12 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
       return;
     }
 
-    // Guard: check if the sound stage matches what is already running.
-    // This stops the auto-cycle useEffect from interrupting a continuous loop if it's the same category.
     if (
       currentPlayingStageRef.current &&
       currentPlayingStageRef.current.mode === simMode &&
       currentPlayingStageRef.current.phase === activeDrainagePhase
     ) {
-      return; // Keep playing uninterrupted!
+      return;
     }
 
     let isCancelled = false;
@@ -271,9 +301,7 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
       const ctx = await resumeAudioContextIfNeeded();
       if (isCancelled) return;
 
-      // Stop previous sounds (synchronously clears the ref so new nodes are safe)
       stopAllSounds();
-
       if (isCancelled) return;
 
       const mainGain = ctx.createGain();
@@ -299,7 +327,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
         }
       }
 
-      // Record the active stage AFTER nodes are started
       currentPlayingStageRef.current = { mode: simMode, phase: activeDrainagePhase };
     };
 
@@ -309,7 +336,17 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
       isCancelled = true;
     };
   }, [soundEnabled, simMode, activeDrainagePhase]);
-  // Clean layout array
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      stopAllSounds();
+      if (audioCtxRef.current) {
+        try { audioCtxRef.current.close(); } catch (e) {}
+      }
+    };
+  }, []);
+
   const benefits = [
     {
       icon: Droplet,
@@ -440,13 +477,10 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                   <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block mb-4">How It Works</span>
                   
                   <div className="space-y-4 relative">
-                    {/* Step 1 */}
                     <div className="flex items-start gap-3">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
                         simMode === 'vacuum' ? 'bg-blue-100 text-blue-700 font-mono border border-blue-300' : 'bg-slate-100 text-slate-500'
-                      }`}>
-                        1
-                      </div>
+                      }`}>1</div>
                       <div className="space-y-0.5">
                         <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
                           <CloudRain size={13} className="text-blue-500" /> Rain or Excess Water
@@ -459,13 +493,10 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                       <ArrowDown size={14} className={`text-slate-300 animate-bounce ${simMode === 'vacuum' ? 'text-blue-400 font-bold' : ''}`} />
                     </div>
 
-                    {/* Step 2 */}
                     <div className="flex items-start gap-3">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
                         simMode === 'vacuum' ? 'bg-blue-100 text-blue-700 font-mono border border-blue-300' : 'bg-slate-100 text-slate-500'
-                      }`}>
-                        2
-                      </div>
+                      }`}>2</div>
                       <div className="space-y-0.5">
                         <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
                           <Droplets size={13} className="text-blue-500" /> Collected on Surface
@@ -478,13 +509,10 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                       <ArrowDown size={14} className={`text-slate-300 animate-bounce ${simMode === 'vacuum' ? 'text-blue-400 font-bold' : ''}`} style={{ animationDelay: '0.2s' }} />
                     </div>
 
-                    {/* Step 3 */}
                     <div className="flex items-start gap-3">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
                         simMode === 'vacuum' ? 'bg-blue-100 text-blue-700 font-mono border border-blue-300' : 'bg-slate-100 text-slate-500'
-                      }`}>
-                        3
-                      </div>
+                      }`}>3</div>
                       <div className="space-y-0.5">
                         <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
                           <Cpu size={13} className="text-blue-500" /> Suction Pumps Activate
@@ -497,13 +525,10 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                       <ArrowDown size={14} className={`text-slate-300 animate-bounce ${simMode === 'vacuum' ? 'text-blue-400 font-bold' : ''}`} style={{ animationDelay: '0.4s' }} />
                     </div>
 
-                    {/* Step 4 */}
                     <div className="flex items-start gap-3">
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
                         simMode === 'vacuum' ? 'bg-blue-600 text-white font-mono border border-blue-700' : 'bg-slate-100 text-slate-500'
-                      }`}>
-                        4
-                      </div>
+                      }`}>4</div>
                       <div className="space-y-0.5">
                         <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
                           <ArrowDownCircle size={13} className="text-blue-600" /> Drained Safely Away
@@ -511,10 +536,8 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                         <p className="text-[11px] text-slate-500 leading-snug">Evacuated into holding basins</p>
                       </div>
                     </div>
-
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
@@ -565,7 +588,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                     
                     <div className="h-[15%] bg-gradient-to-b from-slate-950 to-slate-900 relative flex items-center justify-between px-4 overflow-hidden border-b border-white/5">
                       <div className="text-[9px] font-black tracking-widest text-[#94a3b8] uppercase font-mono">RAIN LEVEL CLOUD BANK</div>
-                      
                       {simMode === 'vacuum' && (activeDrainagePhase === 'all' || activeDrainagePhase === 'precipitation') && (
                         <div className="flex items-center gap-2">
                           <CloudRain size={14} className="text-sky-400 animate-bounce" />
@@ -584,13 +606,11 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                           />
                         ))}
                       </div>
-
                       <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
                         <span className="px-2.5 py-0.5 bg-black/60 text-[8px] font-extrabold tracking-widest text-emerald-300 uppercase rounded-md border border-emerald-500/20 font-mono">
                           1. HYBRID TURF SURFACE (Pitch)
                         </span>
                       </div>
-
                       {simMode === 'vacuum' && (activeDrainagePhase === 'all' || activeDrainagePhase === 'precipitation') && (
                         <div className="absolute inset-0 overflow-hidden pointer-events-none">
                           {[...Array(24)].map((_, i) => {
@@ -634,13 +654,11 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                           );
                         })}
                       </svg>
-
                       <div className="absolute left-4 top-4 z-10">
                         <span className="px-2.5 py-0.5 bg-black/60 text-[8px] font-extrabold tracking-widest text-[#fed7aa] uppercase rounded-md border border-amber-500/20 font-mono">
                           2. USGA SPEC SAND ZONE
                         </span>
                       </div>
-
                       {simMode === 'vacuum' && (activeDrainagePhase === 'all' || activeDrainagePhase === 'filtration') && (
                         <div className="absolute inset-0 overflow-hidden">
                           {[...Array(16)].map((_, i) => {
@@ -667,13 +685,11 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                           <div key={`stone-${i}`} className="w-4 h-4 rounded-full border border-zinc-200 bg-zinc-400" />
                         ))}
                       </div>
-
                       <div className="absolute left-4 top-2 z-10 flex items-center gap-1.5">
                         <span className="px-2.5 py-0.5 bg-black/60 text-[8px] font-extrabold tracking-widest text-slate-300 uppercase rounded-md border border-yellow-500/20 font-mono">
                           3. CHOKED GRAVEL LAYER (10mm Aggregate Bed)
                         </span>
                       </div>
-
                       <div className="flex justify-around items-center w-full mt-4 relative z-20 h-full pb-4">
                         {[1, 2].map((id) => (
                           <div 
@@ -685,7 +701,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_5px_#22d3ee] animate-pulse" />
                               <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 shadow-[0_0_5px_#22d3ee] animate-pulse" />
                             </div>
-
                             {simMode === 'vacuum' && (activeDrainagePhase === 'all' || activeDrainagePhase === 'suction' || activeDrainagePhase === 'discharge') && (
                               <motion.div
                                 animate={{ rotate: 360 }}
@@ -693,7 +708,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                                 className="absolute inset-3 border-2 border-dashed border-[#22d3ee]/40 rounded-full"
                               />
                             )}
-
                             <div className="absolute bottom-0 inset-x-0 h-[45%] bg-gradient-to-t from-blue-700/80 to-sky-500/70">
                               <motion.div
                                 animate={{ y: [-1, 1.5, -1] }}
@@ -701,7 +715,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                                 className="absolute -top-1 inset-x-0 h-1.5 bg-[#7dd3fc] opacity-80 border-t border-sky-300"
                               />
                             </div>
-
                             {simMode === 'vacuum' && (activeDrainagePhase === 'all' || activeDrainagePhase === 'discharge') && (
                               <div className="absolute inset-0 overflow-hidden flex items-center justify-center">
                                 {[...Array(6)].map((_, i) => (
@@ -715,7 +728,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                                 ))}
                               </div>
                             )}
-
                             {simMode === 'vacuum' && (activeDrainagePhase === 'all' || activeDrainagePhase === 'suction') && (
                               <div className="absolute inset-0 pointer-events-none">
                                 {[1, 2].map((dr) => (
@@ -729,14 +741,12 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                                 ))}
                               </div>
                             )}
-
                             <span className="text-[7px] font-extrabold tracking-widest text-[#94a3b8] uppercase mt-2 select-none relative z-10 font-mono">
                               PIPE {id === 1 ? 'WEST' : 'EAST'}
                             </span>
                           </div>
                         ))}
                       </div>
-
                       {simMode === 'vacuum' && (activeDrainagePhase === 'all' || activeDrainagePhase === 'filtration' || activeDrainagePhase === 'suction') && (
                         <div className="absolute inset-0 pointer-events-none">
                           {[...Array(14)].map((_, i) => {
@@ -755,7 +765,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                         </div>
                       )}
                     </div>
-
                   </div>
 
                   <div className="absolute top-4 left-4 z-30">
@@ -781,7 +790,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                       <span>Discharge evacuation</span>
                     </div>
                   )}
-
                 </motion.div>
               ) : (
                 <motion.div
@@ -836,7 +844,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                             className="absolute inset-0 bg-blue-950/20"
                           >
                             <div className="absolute inset-0 overflow-hidden">
-                              
                               {(activeDrainagePhase === 'all' || activeDrainagePhase === 'precipitation') && (
                                 <>
                                   {[...Array(45)].map((_, i) => {
@@ -848,22 +855,13 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                                       <motion.div
                                         key={`rain-p1-${i}`}
                                         initial={{ top: -60, left: `${left}%`, opacity: 0 }}
-                                        animate={{ 
-                                          top: ['0%', '42%'], 
-                                          opacity: [0, 0.9, 0.9, 0] 
-                                        }}
-                                        transition={{
-                                          duration: duration,
-                                          repeat: Infinity,
-                                          ease: 'linear',
-                                          delay: delay,
-                                        }}
+                                        animate={{ top: ['0%', '42%'], opacity: [0, 0.9, 0.9, 0] }}
+                                        transition={{ duration, repeat: Infinity, ease: 'linear', delay }}
                                         className="absolute bg-sky-350 shadow-[0_0_8px_rgba(56,189,248,0.6)] w-[1.5px] rounded-full"
                                         style={{ height: `${height}px`, transform: 'rotate(8deg)' }}
                                       />
                                     );
                                   })}
-
                                   {[...Array(12)].map((_, i) => {
                                     const left = 8 + Math.random() * 84;
                                     const top = 34 + Math.random() * 8;
@@ -872,15 +870,8 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                                       <motion.div
                                         key={`splash-p1-${i}`}
                                         initial={{ scale: 0, opacity: 0 }}
-                                        animate={{ 
-                                          scale: [0.1, 1.6, 0], 
-                                          opacity: [0, 0.95, 0] 
-                                        }}
-                                        transition={{
-                                          duration: 0.45,
-                                          repeat: Infinity,
-                                          delay: delay,
-                                        }}
+                                        animate={{ scale: [0.1, 1.6, 0], opacity: [0, 0.95, 0] }}
+                                        transition={{ duration: 0.45, repeat: Infinity, delay }}
                                         className="absolute border-2 border-sky-300 rounded-full w-4 h-2"
                                         style={{ left: `${left}%`, top: `${top}%` }}
                                       />
@@ -899,17 +890,8 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                                       <motion.div
                                         key={`filter-drop-${i}`}
                                         initial={{ top: '38%', left: `${left}%`, opacity: 0, scale: 0.6 }}
-                                        animate={{
-                                          top: ['38%', '62%'],
-                                          opacity: [0, 1, 1, 0],
-                                          scale: [0.6, 1, 0.6]
-                                        }}
-                                        transition={{
-                                          duration: duration,
-                                          repeat: Infinity,
-                                          ease: 'linear',
-                                          delay: delay,
-                                        }}
+                                        animate={{ top: ['38%', '62%'], opacity: [0, 1, 1, 0], scale: [0.6, 1, 0.6] }}
+                                        transition={{ duration, repeat: Infinity, ease: 'linear', delay }}
                                         className="absolute flex flex-col items-center"
                                       >
                                         <div className="w-1.5 h-3 bg-sky-400 rounded-b-full opacity-80" />
@@ -930,7 +912,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                                     <span className="absolute inline-flex h-24 w-24 rounded-full border-2 border-blue-400/30 animate-ping" style={{ animationDelay: '0.4s' }} />
                                     <span className="absolute inline-flex h-12 w-12 rounded-full border-2 border-blue-400/50 animate-pulse" />
                                   </div>
-
                                   <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                                     {[...Array(8)].map((_, i) => {
                                       const startX = 25 + (i * 6);
@@ -947,7 +928,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                                       );
                                     })}
                                   </svg>
-
                                   {[...Array(15)].map((_, i) => {
                                     const startLeft = 20 + Math.random() * 50;
                                     const targetLeft = startLeft < 48 ? 44 : 57;
@@ -965,12 +945,7 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                                           opacity: [0, 0.95, 0],
                                           scale: [0.5, 1, 0.3]
                                         }}
-                                        transition={{
-                                          duration: duration,
-                                          repeat: Infinity,
-                                          ease: 'circIn',
-                                          delay: delay,
-                                        }}
+                                        transition={{ duration, repeat: Infinity, ease: 'circIn', delay }}
                                         className="absolute w-2 h-2 bg-gradient-to-r from-blue-400 to-sky-400 rounded-full shadow-[0_0_6px_rgba(56,189,248,0.85)]"
                                       />
                                     );
@@ -988,22 +963,12 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                                       <motion.div
                                         key={`discharge-stream-${i}`}
                                         initial={{ left: '50%', top: `${top}%`, width: 0, opacity: 0 }}
-                                        animate={{
-                                          left: ['50%', '82%'],
-                                          width: ['0px', '40px', '0px'],
-                                          opacity: [0, 1, 1, 0]
-                                        }}
-                                        transition={{
-                                          duration: duration,
-                                          repeat: Infinity,
-                                          ease: 'easeOut',
-                                          delay: delay,
-                                        }}
+                                        animate={{ left: ['50%', '82%'], width: ['0px', '40px', '0px'], opacity: [0, 1, 1, 0] }}
+                                        transition={{ duration, repeat: Infinity, ease: 'easeOut', delay }}
                                         className="absolute bg-gradient-to-r from-blue-400 via-sky-300 to-blue-500 h-[3px] rounded-full shadow-[0_0_8px_rgba(14,165,233,0.9)]"
                                       />
                                     );
                                   })}
-
                                   <div className="absolute right-[19%] bottom-[20%]">
                                     <motion.div
                                       animate={{ rotate: -360 }}
@@ -1016,7 +981,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                                   </div>
                                 </div>
                               )}
-
                             </div>
                           </motion.div>
                         )}
@@ -1052,32 +1016,32 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                   </h4>
                 </div>
 
-            <button
-              type="button"
-              onClick={async () => {
-                if (!soundEnabled) {
-                  await resumeAudioContextIfNeeded();
-                }
-                setSoundEnabled(!soundEnabled);
-              }}
-              className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black tracking-widest uppercase transition-all duration-300 border ${
-                soundEnabled
-                  ? 'bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-500/20'
-                  : 'bg-white text-emerald-600 border-emerald-400 hover:bg-emerald-50'
-              }`}
-            >
-              {soundEnabled ? (
-                <>
-                  <Volume2 size={13} className="animate-bounce" />
-                  <span>Sound: ON</span>
-                </>
-              ) : (
-                <>
-                  <VolumeX size={13} />
-                  <span>Sound: OFF (Click to Enable)</span>
-                </>
-              )}
-            </button>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    if (!soundEnabled) {
+                      await resumeAudioContextIfNeeded();
+                    }
+                    setSoundEnabled(!soundEnabled);
+                  }}
+                  className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-xs font-black tracking-widest uppercase transition-all duration-300 border ${
+                    soundEnabled
+                      ? 'bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-500/20'
+                      : 'bg-white text-emerald-600 border-emerald-400 hover:bg-emerald-50'
+                  }`}
+                >
+                  {soundEnabled ? (
+                    <>
+                      <Volume2 size={13} className="animate-bounce" />
+                      <span>Sound: ON</span>
+                    </>
+                  ) : (
+                    <>
+                      <VolumeX size={13} />
+                      <span>Sound: OFF (Click to Enable)</span>
+                    </>
+                  )}
+                </button>
 
                 <button
                   type="button"
@@ -1102,42 +1066,10 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {[
-                  {
-                    id: 'precipitation',
-                    label: 'Phase 1',
-                    title: 'Heavy Rain',
-                    desc: 'Precipitation falls',
-                    icon: CloudRain,
-                    colorClass: 'hover:border-blue-300 text-blue-600',
-                    activeClass: 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/10'
-                  },
-                  {
-                    id: 'filtration',
-                    label: 'Phase 2',
-                    title: 'Percolation',
-                    desc: 'Filters down layers',
-                    icon: Sprout,
-                    colorClass: 'hover:border-amber-300 text-amber-600',
-                    activeClass: 'bg-amber-600 text-white border-amber-600 shadow-lg shadow-amber-600/10'
-                  },
-                  {
-                    id: 'suction',
-                    label: 'Phase 3',
-                    title: 'Suction Extract',
-                    desc: 'Airtight pressure pull',
-                    icon: Wind,
-                    colorClass: 'hover:border-cyan-300 text-cyan-600',
-                    activeClass: 'bg-cyan-600 text-white border-cyan-600 shadow-lg shadow-cyan-600/10'
-                  },
-                  {
-                    id: 'discharge',
-                    label: 'Phase 4',
-                    title: 'Outflow Drain',
-                    desc: 'Evacuated out',
-                    icon: RefreshCw,
-                    colorClass: 'hover:border-emerald-300 text-emerald-600',
-                    activeClass: 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-600/10'
-                  },
+                  { id: 'precipitation', label: 'Phase 1', title: 'Heavy Rain',     desc: 'Precipitation falls',    icon: CloudRain,  colorClass: 'hover:border-blue-300 text-blue-600',    activeClass: 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-600/10' },
+                  { id: 'filtration',    label: 'Phase 2', title: 'Percolation',    desc: 'Filters down layers',    icon: Sprout,     colorClass: 'hover:border-amber-300 text-amber-600',  activeClass: 'bg-amber-600 text-white border-amber-600 shadow-lg shadow-amber-600/10' },
+                  { id: 'suction',       label: 'Phase 3', title: 'Suction Extract',desc: 'Airtight pressure pull', icon: Wind,       colorClass: 'hover:border-cyan-300 text-cyan-600',    activeClass: 'bg-cyan-600 text-white border-cyan-600 shadow-lg shadow-cyan-600/10' },
+                  { id: 'discharge',     label: 'Phase 4', title: 'Outflow Drain',  desc: 'Evacuated out',          icon: RefreshCw,  colorClass: 'hover:border-emerald-300 text-emerald-600', activeClass: 'bg-emerald-600 text-white border-emerald-600 shadow-lg shadow-emerald-600/10' },
                 ].map((phase) => {
                   const Icon = phase.icon;
                   const isActive = activeDrainagePhase === phase.id && simMode === 'vacuum';
@@ -1152,12 +1084,10 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                         }
                         setSimMode('vacuum');
                         setActiveDrainagePhase(phase.id as any);
-                        setIsPlayingFlow(false); 
+                        setIsPlayingFlow(false);
                       }}
                       className={`p-3 rounded-2xl border text-left transition-all duration-300 group flex flex-col justify-between ${
-                        isActive 
-                          ? phase.activeClass 
-                          : 'bg-slate-50 border-slate-100 text-slate-700 ' + phase.colorClass
+                        isActive ? phase.activeClass : 'bg-slate-50 border-slate-100 text-slate-700 ' + phase.colorClass
                       }`}
                     >
                       <div className="flex items-center justify-between gap-1 w-full mb-1">
@@ -1168,9 +1098,7 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                       </div>
                       <div>
                         <h5 className="text-[11px] font-bold tracking-tight uppercase leading-none mb-0.5">{phase.title}</h5>
-                        <p className={`text-[10px] leading-tight font-sans ${isActive ? 'text-white/70' : 'text-slate-500'}`}>
-                          {phase.desc}
-                        </p>
+                        <p className={`text-[10px] leading-tight font-sans ${isActive ? 'text-white/70' : 'text-slate-500'}`}>{phase.desc}</p>
                       </div>
                     </button>
                   );
@@ -1209,7 +1137,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                 </p>
               </div>
             </div>
-
           </div>
 
           {/* RIGHT COLUMN: PRESSURE MODE */}
@@ -1237,87 +1164,42 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
 
                 <div className="border-t border-slate-150/80 pt-5">
                   <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase block mb-4">How It Works</span>
-                  
                   <div className="space-y-4">
-                    {/* Step 1 */}
-                    <div className="flex items-start gap-3">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                        simMode === 'pressure' ? 'bg-emerald-100 text-emerald-700 font-mono border border-emerald-300' : 'bg-slate-100 text-slate-500'
-                      }`}>
-                        1
+                    {[
+                      { n: 1, label: 'Air Drawn in Vent',        sub: 'Air drawn through intake ports',              Icon: Wind,     last: false },
+                      { n: 2, label: 'Air Premium Filtered',     sub: 'Dust, debris & micro-contaminants removed',   Icon: Filter,   last: false },
+                      { n: 3, label: 'Injected Into Soil',       sub: 'Air pushed directly under turf blanket',      Icon: ArrowDown, last: false },
+                      { n: 4, label: 'Stronger Roots, Healthy Turf', sub: 'Fosters massive capillary root growth',  Icon: Sprout,   last: true  },
+                    ].map(({ n, label, sub, Icon, last }, idx) => (
+                      <div key={n}>
+                        <div className="flex items-start gap-3">
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                            simMode === 'pressure'
+                              ? last
+                                ? 'bg-emerald-600 text-white font-mono border border-emerald-700'
+                                : 'bg-emerald-100 text-emerald-700 font-mono border border-emerald-300'
+                              : 'bg-slate-100 text-slate-500'
+                          }`}>{n}</div>
+                          <div className="space-y-0.5">
+                            <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
+                              <Icon size={13} className={simMode === 'pressure' ? (last ? 'text-emerald-600' : 'text-emerald-500') : 'text-slate-400'} />
+                              {label}
+                            </span>
+                            <p className="text-[11px] text-slate-500 leading-snug">{sub}</p>
+                          </div>
+                        </div>
+                        {!last && (
+                          <div className="pl-3 py-1">
+                            <ArrowDown size={14} className={`text-slate-300 animate-bounce ${simMode === 'pressure' ? 'text-emerald-400 font-bold' : ''}`} style={{ animationDelay: `${idx * 0.2}s` }} />
+                          </div>
+                        )}
                       </div>
-                      <div className="space-y-0.5">
-                        <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
-                          <Wind size={13} className="text-emerald-500" /> Air Drawn in Vent
-                        </span>
-                        <p className="text-[11px] text-slate-500 leading-snug">Air drawn through intake ports</p>
-                      </div>
-                    </div>
-
-                    <div className="pl-3 py-1">
-                      <ArrowDown size={14} className={`text-slate-300 animate-bounce ${simMode === 'pressure' ? 'text-emerald-400 font-bold' : ''}`} />
-                    </div>
-
-                    {/* Step 2 */}
-                    <div className="flex items-start gap-3">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                        simMode === 'pressure' ? 'bg-emerald-100 text-emerald-700 font-mono border border-emerald-300' : 'bg-slate-100 text-slate-500'
-                      }`}>
-                        2
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
-                          <Filter size={13} className="text-emerald-500" /> Air Premium Filtered
-                        </span>
-                        <p className="text-[11px] text-slate-500 leading-snug">Dust, debris & micro-contaminants removed</p>
-                      </div>
-                    </div>
-
-                    <div className="pl-3 py-1">
-                      <ArrowDown size={14} className={`text-slate-300 animate-bounce ${simMode === 'pressure' ? 'text-emerald-400 font-bold' : ''}`} style={{ animationDelay: '0.2s' }} />
-                    </div>
-
-                    {/* Step 3 */}
-                    <div className="flex items-start gap-3">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                        simMode === 'pressure' ? 'bg-emerald-100 text-emerald-700 font-mono border border-emerald-300' : 'bg-slate-100 text-slate-500'
-                      }`}>
-                        3
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
-                          <ArrowDown size={13} className="text-emerald-500" /> Injected Into Soil
-                        </span>
-                        <p className="text-[11px] text-slate-500 leading-snug">Air pushed directly under turf blanket</p>
-                      </div>
-                    </div>
-
-                    <div className="pl-3 py-1">
-                      <ArrowDown size={14} className={`text-slate-300 animate-bounce ${simMode === 'pressure' ? 'text-emerald-400 font-bold' : ''}`} style={{ animationDelay: '0.4s' }} />
-                    </div>
-
-                    {/* Step 4 */}
-                    <div className="flex items-start gap-3">
-                      <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                        simMode === 'pressure' ? 'bg-emerald-600 text-white font-mono border border-emerald-700' : 'bg-slate-100 text-slate-500'
-                      }`}>
-                        4
-                      </div>
-                      <div className="space-y-0.5">
-                        <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
-                          <Sprout size={13} className="text-emerald-600" /> Stronger Roots, Healthy Turf
-                        </span>
-                        <p className="text-[11px] text-slate-500 leading-snug">Fosters massive capillary root growth</p>
-                      </div>
-                    </div>
-
+                    ))}
                   </div>
                 </div>
-
               </div>
             </div>
           </div>
-
         </div>
 
         {/* BOTTOM SECTION: KEY BENEFITS */}
@@ -1325,7 +1207,6 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
           <div className="text-center mb-8">
             <h4 className="text-xs font-black tracking-[0.25em] text-slate-400 uppercase">Key Benefits of SubAir Technology</h4>
           </div>
-          
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {benefits.map((b, i) => {
               const IconComp = b.icon;
@@ -1334,19 +1215,15 @@ const currentPlayingStageRef = useRef<{ mode: string; phase: string } | null>(nu
                   <div className={`w-12 h-12 rounded-full ${b.bgColor} ${b.color} flex items-center justify-center mb-3 shadow-inner`}>
                     <IconComp size={22} className="stroke-[2.5]" />
                   </div>
-                  <h5 className="text-xs font-black text-slate-900 uppercase tracking-wide mb-1 leading-tight">
-                    {b.title}
-                  </h5>
-                  <p className="text-[11px] text-slate-500 leading-relaxed font-sans">
-                    {b.desc}
-                  </p>
+                  <h5 className="text-xs font-black text-slate-900 uppercase tracking-wide mb-1 leading-tight">{b.title}</h5>
+                  <p className="text-[11px] text-slate-500 leading-relaxed font-sans">{b.desc}</p>
                 </div>
               );
             })}
           </div>
         </div>
 
-        {/* Active Consultation Prompt CTA */}
+        {/* CTA */}
         <div className="mt-12 text-center">
           <button
             type="button"

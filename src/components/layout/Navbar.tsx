@@ -75,13 +75,6 @@ export const Navbar: FC<NavbarProps> = ({ isMenuOpen, setIsMenuOpen, onConsultat
               </a>
             ))}
             <div className="h-4 w-px bg-white/20"></div>
-            <button className="text-white hover:text-[#0083C9]">
-              <Search size={20} />
-            </button>
-            <button className="text-white hover:text-[#0083C9] flex items-center gap-1">
-              <Globe size={18} />
-              <span className="text-xs">EN</span>
-            </button>
             <button
               onClick={onConsultation}
               className="bg-[#0083C9] hover:bg-[#36B649] text-white font-semibold text-xs tracking-wider px-5 py-2.5 transition-all duration-300 shadow-sm"
