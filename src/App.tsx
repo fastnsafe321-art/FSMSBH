@@ -493,6 +493,7 @@ export default function App() {
       <ProjectDetailsModal
         project={selectedProject}
         onClose={() => setSelectedProject(null)}
+        onInquire={(title) => triggerConsultation('', `Inquiry regarding a project similar to: ${title}`)}
       />
       {/* Consultation Modal */}
       <ConsultationModal
