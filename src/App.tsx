@@ -2,8 +2,12 @@ import React, { useState, useRef, FormEvent } from 'react';
 import { ChevronRight, Calendar, MessageSquare, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+
+
+//Modals
 import ConsultationModal from './components/modals/ConsultationModal';
 import ExpertiseDetailsModal from './components/modals/ExpertiseDetailsModal';
+import ProjectDetailsModal from './components/modals/ProjectDetailsModal';
 
 // Layout Components
 import Navbar from './components/layout/Navbar';
@@ -485,6 +489,10 @@ export default function App() {
       <ExpertiseDetailsModal
         expertise={selectedExpertise}
         onClose={() => setSelectedExpertise(null)}
+      />
+      <ProjectDetailsModal
+        project={selectedProject}
+        onClose={() => setSelectedProject(null)}
       />
       {/* Consultation Modal */}
       <ConsultationModal
