@@ -14,7 +14,7 @@ const NATURAL_SYSTEMS = [
     tagline: 'FS-Grass® Hybrid Stitching & Sub-Air Sub-base',
     icon: Cpu,
     color: '#36B649',
-    image: '/src/assets/images/hybrid_soil_block_clone_1781513567584.jpg',
+    image: '/src/assets/images/gras2.jpeg',
     techSpecs: 'Combines elite certified natural grass with precision synthetic yarn stitching, fully integrated with Sub-Air active aeration.',
     description: 'Our premium Hybrid Stitching System pairs natural grass with custom-engineered vertical synthetic fiber reinforcement, built atop an active Sub-Air ventilation grid. This ensures perfect traction, extreme durability, and advanced moisture management.',
     benefits: [
@@ -31,7 +31,7 @@ const NATURAL_SYSTEMS = [
     tagline: 'Under-Soil Active Climate & Suction Tech',
     icon: Wind,
     color: '#36B649',
-    image: '/src/assets/images/sub_pitch_aeration_1779789441283.png',
+    image: '/src/assets/images/gras3.jpeg',
     techSpecs: 'Active pressure and vacuum induction blower running high-rate root aeration cycles.',
     description: 'An advanced vacuum and blower network embedded in the aggregate sub-base. The Sub-Air system injects fresh oxygen, regulates soil rootzone temperatures in hot desert climates, and extracts water rapidly from the surface.',
     benefits: [
@@ -48,7 +48,7 @@ const NATURAL_SYSTEMS = [
     tagline: 'Active Vacuum Water Extraction',
     icon: Droplet,
     color: '#36B649',
-    image: '/src/assets/images/drainage_trench_blurred_1779790511693.png',
+    image: '/src/assets/images/gras1.jpeg',
     techSpecs: 'High-volume vacuum extractors removing up to 40 liters per square meter per minute.',
     description: 'Continuous smart-monitored vacuum extraction that pulls gravity water out of the playing surface faster than typical gravity drainage. Ideal for tackling sudden rainfall, preventing surface water accumulation, and recycling water into irrigation loops.',
     benefits: [
@@ -65,7 +65,7 @@ const NATURAL_SYSTEMS = [
     tagline: 'Root-Zone Microclimatic Warming',
     icon: Flame,
     color: '#36B649',
-    image: '/src/assets/images/geothermal_heating_pipes_1779790335777.png',
+    image: '/src/assets/images/gras4.jpeg',
     techSpecs: 'High-density under-turf pipe network circulating hydronic heating fluid at 15-22°C.',
     description: 'An advanced underground piping grid that circulates warm water directly beneath the turf. This maintains stable geothermal warmth, prevents dew condensation on synthetic fibers, and stimulates natural grass growth during cold regional winter seasons.',
     benefits: [
