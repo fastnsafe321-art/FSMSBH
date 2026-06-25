@@ -149,7 +149,7 @@ export const EXPERTISE: Expertise[] = [
   { 
     name: 'FENCING WORKS', 
     icon: Shield,
-    image: '/src/assets/images/fencing_work_installation_1779107563771.png', 
+    image: '/src/assets/images/fence1.jpeg', 
     desc: 'Secure perimeter and sports-specific fencing solutions.',
     detailedDesc: 'We provide heavy-duty security and sports fencing systems. Our solutions range from anti-climb palisade fencing for industrial facilities to high-impact safety netting for athletic stadiums.',
     features: [
@@ -171,17 +171,17 @@ export const EXPERTISE: Expertise[] = [
       }
     ],
     gallery: [
-      '/src/assets/images/fencing_work_installation_1779107563771.png',
-      '/src/assets/images/palisade_security_fence_1779108020060.png',
-      '/src/assets/images/fence_security_detail_1779107792940.png',
-      '/src/assets/images/fencing_sports_netting_1779108316007.png',
-      '/src/assets/images/fencing_heavy_gate_1779108334518.png'
+      '/src/assets/images/fence1.jpeg',
+      '/src/assets/images/fence2.jpeg',
+      '/src/assets/images/fence3.jpeg',
+      '/src/assets/images/fence4.png',
+      '/src/assets/images/fence5.png'
     ]
   },
   { 
     name: 'BUILDING CONSTRUCTION', 
     icon: Building,
-    image: '/src/assets/images/building_construction_site_1779107581243.png', 
+    image: '/src/assets/images/build4.jpeg', 
     desc: 'Comprehensive civil works and turnkey building projects.',
     detailedDesc: 'From shoring and excavation to structural concrete and turnkey delivery, our civil engineering department handles complex building projects with a zero-incident safety commitment.',
     features: [
@@ -202,11 +202,11 @@ export const EXPERTISE: Expertise[] = [
       }
     ],
     gallery: [
-      '/src/assets/images/building_construction_site_1779107581243.png',
-      '/src/assets/images/structural_concrete_pillars_1779108083297.png',
-      '/src/assets/images/construction_blueprint_still_1779112823648.png',
-      '/src/assets/images/concrete_pouring_foundation_1779108366053.png',
-      '/src/assets/images/pool_construction_site_1779107512639.png'
+      '/src/assets/images/build1.jpeg',
+      '/src/assets/images/build2.jpeg',
+      '/src/assets/images/build3.jpeg',
+      '/src/assets/images/build4.jpeg',
+      '/src/assets/images/build5.jpeg'
     ]
   },
   { 
@@ -236,7 +236,7 @@ export const EXPERTISE: Expertise[] = [
   { 
     name: 'SWIMMING POOL CONSTRUCTION', 
     icon: Waves,
-    image: '/src/assets/images/pool_construction_site_1779107512639.png', 
+    image: '/src/assets/images/swim5.jpeg', 
     desc: 'Professional concrete pool shells and turnkey aquatic works.',
     detailedDesc: 'Our swimming pool division handles complete construction from structural concrete shells to advanced filtration systems and artistic tile finishes for luxury residences and hotels.',
     features: [
@@ -257,17 +257,20 @@ export const EXPERTISE: Expertise[] = [
       }
     ],
     gallery: [
-      '/src/assets/images/pool_construction_site_1779107512639.png',
-      '/src/assets/images/pool_tiling_detail_1779107736835.png',
-      '/src/assets/images/swimming_pool_pumps_room_1779108424776.png',
-      '/src/assets/images/completed_infinity_pool_night_1779108439524.png',
-      '/src/assets/images/pool_tiling_process_detail_1779112845511.png'
+      '/src/assets/images/swim1.jpeg',
+      '/src/assets/images/swim2.jpeg',
+      '/src/assets/images/swim3.jpeg',
+      '/src/assets/images/swim4.jpeg',
+      '/src/assets/images/swim5.jpeg',
+      '/src/assets/images/swim6.jpeg',
+      '/src/assets/images/swim7.jpeg',
+      '/src/assets/images/swim8.jpeg'
     ]
   },
   { 
     name: 'CARPENTRY & WOOD WORKS', 
     icon: Hammer,
-    image: '/src/assets/images/Img 1.jpg', 
+    image: '/src/assets/images/carp6.jpeg', 
     desc: 'High-end custom woodwork and precision carpentry installations.',
     detailedDesc: 'Our custom carpentry and woodwork division provides high-durability timber structures, deckings, structural frameworks, and bespoke wood details for equestrian, residential, and commercial complexes.',
     features: [
@@ -298,20 +301,12 @@ export const EXPERTISE: Expertise[] = [
       }
     ],
     gallery: [
-      '/src/assets/images/Img 1.jpg',
-      '/src/assets/images/Img 2.png',
-      '/src/assets/images/image 3.png',
-      '/src/assets/images/img 4.png',
-      '/src/assets/images/imag 5.png',
-      '/src/assets/images/img 6.png',
-      '/src/assets/images/img 7.png',
-      '/src/assets/images/img 8.png',
-      '/src/assets/images/img  12.png',
-      '/src/assets/images/carpentry_workshop_machinery_1779107547457.png',
-      '/src/assets/images/carpentry_cnc_machine_1779108036737.png',
-      '/src/assets/images/carpentry_custom_furniture_1779108464249.png',
-      '/src/assets/images/carpentry_sanding_process_1779108479778.png',
-      '/src/assets/images/gym_interior_woodwork_1779107757792.png'
+      '/src/assets/images/carp1.jpeg',
+      '/src/assets/images/carp2.jpeg',
+      '/src/assets/images/carp3.jpeg',
+      '/src/assets/images/carp4.jpeg',
+      '/src/assets/images/carp5.jpeg',
+      '/src/assets/images/carp6.jpeg'
     ]
   },
 ];

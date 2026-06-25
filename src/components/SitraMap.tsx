@@ -40,7 +40,7 @@ export default function SitraMap() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white uppercase tracking-wide">Main Depot</h3>
-                  <p className="text-xs text-gray-400 font-mono">CR No. 124032-1</p>
+                  <p className="text-xs text-gray-400 font-mono">CR No. 33626-6</p>
                 </div>
               </div>
 
@@ -70,9 +70,13 @@ export default function SitraMap() {
                     <Phone size={14} className="text-[#0083C9]" />
                     <span>+973 77912500</span>
                   </a>
-                  <a href="mailto:fastsafecontracting@gmail.com" className="flex items-center gap-3 text-xs text-gray-300 hover:text-[#0083C9] transition-colors font-mono">
+                  <a href="tel:+97339354111" className="flex items-center gap-3 text-xs text-gray-300 hover:text-[#0083C9] transition-colors font-mono">
+                    <Phone size={14} className="text-[#0083C9]" />
+                    <span>+973 39354111</span>
+                  </a>
+                  <a href="mailto:info@fsmsbh.com" className="flex items-center gap-3 text-xs text-gray-300 hover:text-[#0083C9] transition-colors font-mono">
                     <Mail size={14} className="text-[#0083C9]" />
-                    <span>fastsafecontracting@gmail.com</span>
+                    <span>info@fsmsbh.com</span>
                   </a>
                 </div>
               </div>
