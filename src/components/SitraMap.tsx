@@ -40,7 +40,7 @@ export default function SitraMap() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-white uppercase tracking-wide">Main Depot</h3>
-                  <p className="text-xs text-gray-400 font-mono">CR No. 33626-6</p>
+                  <p className="text-xs text-gray-400 font-mono"></p>
                 </div>
               </div>
 

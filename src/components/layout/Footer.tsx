@@ -107,15 +107,6 @@ export const Footer: FC = () => {
                 <span>{COMPANY_INFO.location}</span>
               </li>
 
-              {/* CR Number */}
-              <li className="flex gap-3">
-                <Hash size={18} className="text-[#0083C9] shrink-0 mt-0.5" />
-                <span>
-                  CR No:{' '}
-                  <span className="font-semibold text-gray-300 tracking-wider">33626-6</span>
-                </span>
-              </li>
-
               {/* Telecom / Phone numbers */}
               <li className="flex gap-3">
                 <Phone size={18} className="text-[#0083C9] shrink-0 mt-0.5" />
