@@ -7,8 +7,8 @@ const HERO_SLIDES = [
     id: 'slide-1',
     image: '/src/assets/images/pristine_pitch_night_1781166845895.png',
     tag: 'KINGDOM OF BAHRAIN • ESTABLISHED 2010',
-    titleFirstLine: 'WE BUILD THE GROUNDS',
-    titleSecondLine: 'THE GAME IS PLAYED ON',
+    titleFirstLine: 'WE BUILD THE GROUND',
+    titleSecondLine: 'NATURAL GRASS PLAYS THE GAME',
     description: 'Fast & Safe Maintenance Services delivers elite sports facility construction across Bahrain — natural grass pitches, artificial turf, sports flooring and irrigation — built to specification and handed over match-ready.',
     bullets: [
       { label: 'NATIONWIDE', value: '40+ Pitches Serviced' },
