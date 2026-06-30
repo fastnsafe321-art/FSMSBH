@@ -71,11 +71,17 @@ export const Footer: FC = () => {
               Key Activities
             </h4>
             <ul className="space-y-4 text-gray-400 text-sm">
-              <li>Civil & Structural Works</li>
-              <li>Athletic Construction</li>
+              <li>Natural Grass Sports Field Construction</li>
+              <li>Artificial Grass Sports Field Construction</li>
+              <li>Hybrid Turf System Installation</li>
+              <li>SubAir System Installation & Integration</li>
+              <li>Geothermal Sports Turf Systems</li>
               <li>Landscape & Irrigation</li>
-              <li>Interior Fit Out</li>
               <li>Fencing Solutions</li>
+              <li>Civil & Structural Works</li>
+              <li>Interior Fit Out Works</li>
+              <li>Swimming Pool Construction</li>
+              <li>Horse Walker Installation</li>
             </ul>
           </div>
 
