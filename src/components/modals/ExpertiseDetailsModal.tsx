@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react';
 import { Expertise } from '../../types';
-import { getImgUrl } from '../../utils';
+import ResponsiveImage from '../media/ResponsiveImage';
 
 interface Props {
   expertise: Expertise | null;
@@ -78,7 +78,7 @@ const ExpertiseDetailsModal: FC<Props> = ({ expertise, onClose }) => {
               </div>
 
               {/* Section nav */}
-              <nav className="flex flex-col gap-1">
+              <nav aria-label="Expertise sections" className="flex flex-col gap-1">
                 {visibleSections.map((s, idx) => (
                   <button
                     key={s.id}
@@ -124,16 +124,19 @@ const ExpertiseDetailsModal: FC<Props> = ({ expertise, onClose }) => {
 
             {/* ── HERO ── */}
             <div id="expertise-section-overview" className="relative h-[420px] shrink-0">
-              <img
-                src={getImgUrl(expertise.image)}
-                alt={expertise.name}
+              <ResponsiveImage
+                src={expertise.image}
+                alt={expertise.displayName || expertise.name}
+                sizes="100vw"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/40 to-black/75" />
 
               {/* Close button */}
               <button
+                type="button"
                 onClick={onClose}
+                aria-label="Close modal"
                 className="absolute top-6 right-6 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 transition-colors z-10"
               >
                 <X size={18} className="text-gray-800" />
@@ -149,7 +152,7 @@ const ExpertiseDetailsModal: FC<Props> = ({ expertise, onClose }) => {
               {/* Title */}
               <div className="absolute bottom-0 left-0 right-0 p-10">
                 <h2 className="text-4xl md:text-5xl font-black text-white leading-tight mb-4 uppercase tracking-tight">
-                  {expertise.name}
+                  {expertise.displayName || expertise.name}
                 </h2>
                 {expertise.detailedDesc && (
                   <p className="text-white/85 text-sm md:text-base italic leading-relaxed max-w-2xl">
@@ -205,9 +208,10 @@ const ExpertiseDetailsModal: FC<Props> = ({ expertise, onClose }) => {
                           className="w-24 h-24 rounded-xl overflow-hidden shrink-0 cursor-pointer border border-gray-100"
                           onClick={() => setEnlargedImage(step.image!)}
                         >
-                          <img
-                            src={getImgUrl(step.image)}
+                          <ResponsiveImage
+                            src={step.image}
                             alt={step.title}
+                            sizes="96px"
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           />
                         </div>
@@ -238,9 +242,10 @@ const ExpertiseDetailsModal: FC<Props> = ({ expertise, onClose }) => {
                       onClick={() => setEnlargedImage(img)}
                       className="aspect-square rounded-xl overflow-hidden cursor-pointer group border border-gray-100"
                     >
-                      <img
-                        src={getImgUrl(img)}
-                        alt={`${expertise.name} gallery ${idx + 1}`}
+                      <ResponsiveImage
+                        src={img}
+                        alt={`${expertise.displayName || expertise.name} gallery ${idx + 1}`}
+                        sizes="(min-width: 1024px) 20vw, 50vw"
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                     </div>
@@ -289,15 +294,20 @@ const ExpertiseDetailsModal: FC<Props> = ({ expertise, onClose }) => {
               >
                 <X size={20} />
               </button>
-              <motion.img
+              <motion.div
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0.9 }}
-                src={getImgUrl(enlargedImage)}
-                alt="Enlarged view"
-                className="max-w-full max-h-full object-contain rounded-2xl"
+                className="max-w-full max-h-full"
                 onClick={(e) => e.stopPropagation()}
-              />
+              >
+                <ResponsiveImage
+                  src={enlargedImage}
+                  alt="Enlarged view"
+                  sizes="90vw"
+                  className="max-w-full max-h-full object-contain rounded-2xl"
+                />
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

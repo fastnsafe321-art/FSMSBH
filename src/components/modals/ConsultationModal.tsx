@@ -50,83 +50,10 @@ const EMAILJS_PUBLIC_KEY  = 'NYxz7kHn0sMp0ntIy';   // e.g. 'A1b2C3d4E5f6G7h8'
 // ─────────────────────────────────────────────────────────────────────────────
 
 
-// ─── 1. FIREBASE SETUP ────────────────────────────────────────────────────────
+// ─── 1. FIREBASE (on-demand via shared module; no import-time network) ─────────
 
-import { initializeApp, getApps } from 'firebase/app';
-import {
-  getFirestore,
-  doc,
-  getDocFromServer,
-  addDoc,
-  collection,
-  serverTimestamp,
-} from 'firebase/firestore';
-import firebaseConfig from '../../../firebase-applet-config.json';
-
-const app = getApps().length === 0
-  ? initializeApp(firebaseConfig)
-  : getApps()[0];
-
-const db = getFirestore(app, (firebaseConfig as any).firestoreDatabaseId);
-
-enum OperationType {
-  CREATE = 'create',
-  UPDATE = 'update',
-  DELETE = 'delete',
-  LIST   = 'list',
-  GET    = 'get',
-  WRITE  = 'write',
-}
-
-interface FirestoreErrorInfo {
-  error: string;
-  operationType: OperationType;
-  path: string | null;
-  authInfo: {
-    userId?: string | null;
-    email?: string | null;
-    emailVerified?: boolean | null;
-    isAnonymous?: boolean | null;
-    tenantId?: string | null;
-    providerInfo?: { providerId?: string | null; email?: string | null }[];
-  };
-}
-
-function handleFirestoreError(
-  error: unknown,
-  operationType: OperationType,
-  path: string | null,
-) {
-  const errInfo: FirestoreErrorInfo = {
-    error: error instanceof Error ? error.message : String(error),
-    authInfo: {
-      userId: null,
-      email: null,
-      emailVerified: null,
-      isAnonymous: null,
-      tenantId: null,
-      providerInfo: [],
-    },
-    operationType,
-    path,
-  };
-  console.error('Firestore Error: ', JSON.stringify(errInfo));
-  throw new Error(JSON.stringify(errInfo));
-}
-
-async function testConnection() {
-  try {
-    await getDocFromServer(doc(db, 'test', 'connection'));
-  } catch (error) {
-    if (
-      error instanceof Error &&
-      error.message.includes('the client is offline')
-    ) {
-      console.warn('Firestore client is offline. Please check active networks.');
-    }
-  }
-}
-testConnection();
+import { serverTimestamp } from 'firebase/firestore';
+import { writeConsultation, handleFirestoreError, OperationType } from '../../firebase';
 
 
 // ─── 2. CONSTANTS ─────────────────────────────────────────────────────────────
@@ -207,22 +134,12 @@ async function sendEmailNotification(params: {
 
 // ─── 4. COMPONENT ─────────────────────────────────────────────────────────────
 
-import { useState, FormEvent } from 'react';
+import { Dispatch, SetStateAction, useState, FormEvent } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { X, Loader2, Check, ChevronRight, Calendar } from 'lucide-react';
+import { ConsultationFormState } from '../../types';
 
-interface FormData {
-  name:          string;
-  email:         string;
-  phone:         string;
-  company:       string;
-  location:      string;
-  timeline:      string;
-  contactMethod: string;
-  message:       string;
-}
-
-const DEFAULT_FORM_DATA: FormData = {
+const DEFAULT_FORM_DATA: ConsultationFormState = {
   name:          '',
   email:         '',
   phone:         '',
@@ -238,8 +155,8 @@ interface Props {
   setIsOpen:         (open: boolean) => void;
   selectedService:   string;
   setSelectedService:(service: string) => void;
-  formData:          FormData;
-  setFormData:       (data: FormData) => void;
+  formData:          ConsultationFormState;
+  setFormData:       Dispatch<SetStateAction<ConsultationFormState>>;
 }
 
 export default function ConsultationModal({
@@ -309,7 +226,7 @@ export default function ConsultationModal({
       if (formData.company?.trim()) payload.company = formData.company.trim();
       if (formData.message?.trim()) payload.message = formData.message.trim();
 
-      await addDoc(collection(db, 'consultations'), payload);
+      await writeConsultation(payload);
 
       // ── 2. Send email notification via EmailJS (non-blocking) ─────────────
       // We deliberately do NOT await this with a try/catch that surfaces errors

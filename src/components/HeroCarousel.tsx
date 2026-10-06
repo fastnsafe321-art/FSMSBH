@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, ArrowRight, Activity, Award, HelpCircle, Shield, ArrowRightLeft, Layers, Sliders, RotateCw, Compass, Maximize2, Minimize2, Sparkles } from 'lucide-react';
+import ResponsiveImage from './media/ResponsiveImage';
+import { prefetchResponsiveImage } from '../utils/imageVariants';
 
 const HERO_SLIDES = [
   {
     id: 'slide-1',
     image: '/src/assets/images/pristine_pitch_night_1781166845895.png',
     tag: 'KINGDOM OF BAHRAIN • ESTABLISHED 2010',
-    titleFirstLine: 'WE BUILD THE GROUND',
-    titleSecondLine: 'NATURAL GRASS PLAYS THE GAME',
-    description: 'Fast & Safe Maintenance Services delivers elite sports facility construction across Bahrain — natural grass pitches, artificial turf, sports flooring and irrigation — built to specification and handed over match-ready.',
+    alt: 'Floodlit football pitch at night with marked grass and empty stadium stands',
+    description: 'Fast & Safe Maintenance Services installs artificial turf and natural grass sports pitches in Bahrain. Our published projects include football turf replacement for clubs and sports facilities. Based in Sitra, we welcome enquiries about pitch installation and replacement.',
     bullets: [
       { label: 'NATIONWIDE', value: '40+ Pitches Serviced' },
       { label: 'FIELD DIMENSION', value: '105m × 68m Delivered' },
@@ -29,8 +30,7 @@ const HERO_SLIDES = [
     id: 'slide-2',
     image: '/src/assets/images/stadium_turf_night_pro_1781167905540.png',
     tag: 'SURFACE ENGINEERING STANDARD',
-    titleFirstLine: 'HIGH-PERFORMANCE',
-    titleSecondLine: 'ARTIFICIAL TURF SYSTEMS',
+    alt: 'Close-up of a football pitch sideline and turf under stadium floodlights',
     description: 'Combining ultimate safety, realistic ball roll, and extreme durability against Bahrain’s marine atmospheric salinity and heavy summer peak temperatures.',
     bullets: [
       { label: 'PITCH DESIGN', value: 'FIFA Quality standards' },
@@ -51,8 +51,7 @@ const HERO_SLIDES = [
     id: 'slide-3',
     image: '/src/assets/images/natural_sod_clean_blurred_workers_installation_1781170765388.png',
     tag: 'SPECIFICATION-LED PROCUREMENT',
-    titleFirstLine: 'FROM ROOTZONE',
-    titleSecondLine: 'TO FINAL LINE MARKING',
+    alt: 'Workers unrolling natural grass sod on a sports pitch',
     description: 'Premium certified sports turf installations. Sand-based rootzones, organic soil conditioning, and automated irrigation with water-conserving smart controllers.',
     bullets: [
       { label: 'ROOTZONE', value: '350mm USGA Silica/Marine Sand' },
@@ -100,6 +99,11 @@ export default function HeroCarousel({ getImgUrl, triggerConsultation }: HeroCar
     return () => clearInterval(progressTimer);
   }, [currentSlideIdx]);
 
+  useEffect(() => {
+    const next = HERO_SLIDES[(currentSlideIdx + 1) % HERO_SLIDES.length];
+    prefetchResponsiveImage(next.image, '100vw');
+  }, [currentSlideIdx]);
+
   const handlePrev = () => {
     setProgress(0);
     setCurrentSlideIdx((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
@@ -113,7 +117,7 @@ export default function HeroCarousel({ getImgUrl, triggerConsultation }: HeroCar
   const activeSlide = HERO_SLIDES[currentSlideIdx];
 
   return (
-    <section className="relative h-screen flex items-center overflow-hidden bg-black select-none">
+    <section id="home-hero" className="relative h-screen flex items-center overflow-hidden bg-black select-none">
       
       {/* Slide Image Background Layer with Zoom-Effect */}
       <div className="absolute inset-0 z-0">
@@ -126,9 +130,11 @@ export default function HeroCarousel({ getImgUrl, triggerConsultation }: HeroCar
             transition={{ duration: 1.4, ease: 'easeOut' }}
             className="absolute inset-0 animate-fade-in"
           >
-            <img
-              src={getImgUrl(activeSlide.image)}
-              alt={activeSlide.tag}
+            <ResponsiveImage
+              src={activeSlide.image}
+              alt={activeSlide.alt}
+              sizes="100vw"
+              loading="eager"
               className="w-full h-full object-cover select-none pointer-events-none opacity-100 brightness-[1.08] contrast-[1.10] saturate-[1.15] filter-gpu"
             />
           </motion.div>
@@ -155,6 +161,7 @@ export default function HeroCarousel({ getImgUrl, triggerConsultation }: HeroCar
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -25, opacity: 0 }}
                   transition={{ duration: 0.50, ease: 'easeOut' }}
+                  data-hero-copy=""
                   className="flex items-center gap-3"
                 >
                   <div className="w-2.5 h-2.5 bg-[#36B649] rounded-full animate-pulse shrink-0" />
@@ -165,24 +172,17 @@ export default function HeroCarousel({ getImgUrl, triggerConsultation }: HeroCar
               </AnimatePresence>
             </div>
 
-            {/* Huge Display Heading with slanted style */}
+            {/* Persistent H1 — same wording across carousel transitions */}
             <div className="overflow-hidden mb-6">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={activeSlide.id}
-                  initial={{ y: 60, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -60, opacity: 0 }}
-                  transition={{ duration: 0.65, delay: 0.05, ease: 'easeOut' }}
-                >
-                  <h1 className="text-white text-4.5xl sm:text-5xl md:text-7xl font-black leading-none uppercase tracking-tight italic">
-                    {activeSlide.titleFirstLine} <br />
-                    <span className="text-[#0083C9] not-italic font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#0083C9] to-blue-400">
-                      {activeSlide.titleSecondLine}
-                    </span>
-                  </h1>
-                </motion.div>
-              </AnimatePresence>
+              <h1
+                data-hero-copy=""
+                className="text-white text-4.5xl sm:text-5xl md:text-7xl font-black leading-none uppercase tracking-tight italic"
+              >
+                Football Pitch Construction <br />
+                <span className="text-[#0083C9] not-italic font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#0083C9] to-blue-400">
+                  in Bahrain
+                </span>
+              </h1>
             </div>
 
             {/* Description Text with fine margins */}
@@ -194,6 +194,7 @@ export default function HeroCarousel({ getImgUrl, triggerConsultation }: HeroCar
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -45, opacity: 0 }}
                   transition={{ duration: 0.65, delay: 0.12, ease: 'easeOut' }}
+                  data-hero-copy=""
                   className="text-gray-200 text-base md:text-lg leading-relaxed font-light shadow-sm"
                 >
                   {activeSlide.description}

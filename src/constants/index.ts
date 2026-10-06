@@ -101,7 +101,7 @@ export const COMPANY_INFO = {
   founded: '2010',
   location: 'Sitra, Kingdom of Bahrain',
   phone: '+973 77912500',
-  email: 'fastsafecontracting@gmail.com',
+  email: 'info@fsmsbh.com',
   yearsExperience: '16',
   repeatCustomerRate: '75%',
 } as const;

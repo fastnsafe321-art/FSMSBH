@@ -1,7 +1,7 @@
 import React, { useState, useRef, FormEvent } from 'react';
 import { ChevronRight, Calendar, MessageSquare, Loader2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { serverTimestamp } from 'firebase/firestore';
 
 
 //Modals
@@ -12,6 +12,7 @@ import ProjectDetailsModal from './components/modals/ProjectDetailsModal';
 // Layout Components
 import Navbar from './components/layout/Navbar';
 import Footer from './components/layout/Footer';
+import JsonLd from './components/seo/JsonLd';
 
 // Section Components
 import AboutSection from './components/sections/AboutSection';
@@ -41,11 +42,11 @@ import {
 } from './utils';
 
 // Hooks
-import { useLocalStorage, useCamera } from './hooks';
+import { useCamera } from './hooks';
 
 // Types
-import { Project, Expertise, ConsultationForm } from './types';
-import { db, handleFirestoreError, OperationType } from './firebase';
+import { Project, Expertise, ConsultationFormState } from './types';
+import { writeConsultation, handleFirestoreError, OperationType } from './firebase';
 
 /**
  * Main Application Component
@@ -66,19 +67,12 @@ export default function App() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedExpertise, setSelectedExpertise] = useState<Expertise | null>(null);
   const [enlargedImage, setEnlargedImage] = useState<string | null>(null);
-  const [isAddProjectOpen, setIsAddProjectOpen] = useState(false);
-
-  // ===========================
-  // Data Persistence
-  // ===========================
-  const [projectsList, setProjectsList] = useLocalStorage<Project[]>('fast_safe_projects', PROJECTS);
-  const [expertiseList, setExpertiseList] = useLocalStorage<Expertise[]>('fast_safe_expertise', EXPERTISE);
 
   // ===========================
   // Consultation Form State
   // ===========================
   const [selectedService, setSelectedService] = useState(ACTIVITIES[0]);
-  const [formData, setFormData] = useState<Partial<ConsultationForm>>({
+  const [formData, setFormData] = useState<ConsultationFormState>({
     name: '',
     email: '',
     phone: '',
@@ -278,7 +272,7 @@ export default function App() {
       if (formData.message?.trim()) payload.message = formData.message.trim();
       if (attachedPhotos.length > 0) payload.photos = attachedPhotos.map(p => p.dataUrl);
 
-      await addDoc(collection(db, 'consultations'), payload);
+      await writeConsultation(payload);
 
       setConsultationRef(ticketCode);
       setSubmitSuccess(true);
@@ -290,96 +284,18 @@ export default function App() {
   };
 
   // ===========================
-  // Project Management
-  // ===========================
-  const handleCreateNewProject = async (proj: Omit<Project, 'id'>) => {
-    let coverImage = proj.image;
-    if (coverImage.startsWith('data:image/')) {
-      try {
-        coverImage = await compressImage(coverImage);
-      } catch (err) {
-        console.error(err);
-      }
-    }
-
-    const processedGallery = await Promise.all(proj.gallery.map(async (img) => {
-      if (img.startsWith('data:image/')) {
-        try {
-          return await compressImage(img);
-        } catch (err) {
-          console.error(err);
-          return img;
-        }
-      }
-      return img;
-    }));
-
-    const newId = projectsList.length > 0 ? Math.max(...projectsList.map(p => p.id)) + 1 : 1;
-    const projectWithId: Project = {
-      id: newId,
-      title: proj.title || 'New Project',
-      category: proj.category || 'Professional Sports',
-      desc: proj.desc || 'Project description',
-      image: coverImage || processedGallery[0] || '/assets/images/default.png',
-      client: proj.client || 'Client Name',
-      year: proj.year || new Date().getFullYear().toString(),
-      details: proj.details || proj.desc || 'Project details',
-      gallery: processedGallery.length > 0 ? processedGallery : [coverImage],
-    };
-
-    const updated = [...projectsList, projectWithId];
-    setProjectsList(updated);
-    setSelectedProject(projectWithId);
-    setIsAddProjectOpen(false);
-  };
-
-  const handleDeleteProject = (projectId: number) => {
-    const updated = projectsList.filter(p => p.id !== projectId);
-    setProjectsList(updated);
-    if (selectedProject?.id === projectId) {
-      setSelectedProject(null);
-    }
-  };
-
-  // ===========================
-  // Expertise Management
-  // ===========================
-  const handleAddImageToExpertise = async (expertiseName: string, newImageUrl: string) => {
-    let resolvedUrl = newImageUrl;
-    if (newImageUrl.startsWith('data:image/')) {
-      try {
-        resolvedUrl = await compressImage(newImageUrl);
-      } catch (err) {
-        console.error('Image compression failed:', err);
-      }
-    }
-
-    const updated = expertiseList.map(exp => {
-      if (exp.name === expertiseName) {
-        const updatedGallery = [...exp.gallery];
-        if (!updatedGallery.includes(resolvedUrl)) {
-          updatedGallery.push(resolvedUrl);
-        }
-        return {...exp, gallery: updatedGallery};
-      }
-      return exp;
-    });
-
-    setExpertiseList(updated);
-  };
-
-  // ===========================
   // Render
   // ===========================
   return (
     <div className="min-h-screen bg-white font-sans text-gray-900 selection:bg-[#0083C9] selection:text-white">
-      {/* Navigation */}
+      <JsonLd />
       <Navbar
         isMenuOpen={isMenuOpen}
         setIsMenuOpen={setIsMenuOpen}
         onConsultation={() => triggerConsultation()}
       />
 
+      <main>
       {/* Hero Section */}
       <HeroCarousel
         getImgUrl={getImgUrl}
@@ -402,16 +318,14 @@ export default function App() {
 
       {/* Expertise Section */}
       <ExpertiseSection
-        expertiseList={expertiseList}
+        expertiseList={EXPERTISE}
         onSelectExpertise={setSelectedExpertise}
       />
 
       {/* Projects Section */}
       <ProjectsSection
-        projectsList={projectsList}
-        onAddProject={() => setIsAddProjectOpen(true)}
+        projectsList={PROJECTS}
         onSelectProject={setSelectedProject}
-        onDeleteProject={handleDeleteProject}
       />
 
       {/* Safety & Quality Section */}
@@ -419,10 +333,10 @@ export default function App() {
         <div className="container mx-auto px-6 lg:px-12">
           <div className="flex flex-col lg:flex-row items-center gap-16">
             <div className="lg:w-1/2">
-              <h2 className="text-sm font-bold tracking-[0.3em] opacity-80 mb-4 uppercase">
+              <p className="text-sm font-bold tracking-[0.3em] opacity-80 mb-4 uppercase">
                 Commitment to Standards
-              </h2>
-              <h3 className="text-4xl font-bold mb-8">Integrated ISO Quality & Safety Loop</h3>
+              </p>
+              <h2 className="text-4xl font-bold mb-8">Quality & Safety in Project Delivery</h2>
               <p className="text-white/80 leading-relaxed mb-8">
                 We understand that safety, quality, and environmental compliance are deeply interconnected.
                 Our fully audited ISO certifications mandate absolute rigour across our entire operational chain.
@@ -447,9 +361,9 @@ export default function App() {
                   Enterprise Quality Audit
                 </span>
                 <div className="flex items-center gap-3 mb-6">
-                  <h4 className="text-2xl font-black italic text-[#0083C9] bg-white w-fit px-4 py-1 rounded">
+                  <h3 className="text-2xl font-black italic text-[#0083C9] bg-white w-fit px-4 py-1 rounded">
                     ISO 9001:2015
-                  </h4>
+                  </h3>
                   <span className="text-xs font-bold text-white/95">Certified Policy</span>
                 </div>
                 <p className="text-lg italic leading-relaxed mb-8">
@@ -478,8 +392,8 @@ export default function App() {
 
       {/* Sitra Map */}
       <SitraMap />
+      </main>
 
-      {/* Footer */}
       <Footer />
 
       {/* Floating FAB */}
@@ -501,7 +415,7 @@ export default function App() {
         setIsOpen={setIsConsultationOpen}
         selectedService={selectedService}
         setSelectedService={setSelectedService}
-        formData={formData as any}
+        formData={formData}
         setFormData={setFormData}
       />
     </div>

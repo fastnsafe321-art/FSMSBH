@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { MapPin, Phone, Mail, Instagram, Facebook, Linkedin, Youtube, Globe, Hash } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe } from 'lucide-react';
 import { COMPANY_INFO, ISO_CERTIFICATIONS } from '../../constants';
 
 /**
@@ -29,47 +29,16 @@ export const Footer: FC = () => {
                 </span>
               </div>
             </div>
-            <p className="text-gray-400 text-sm leading-relaxed mb-8">
+            <p className="text-gray-400 text-sm leading-relaxed">
               Building projects and making dreams a reality. Headquartered in {COMPANY_INFO.location}, serving the entire region with excellence since {COMPANY_INFO.founded}.
             </p>
-            {/* Social Links */}
-            <div className="flex gap-4">
-              <a
-                href="#"
-                aria-label="Follow us on Instagram"
-                className="w-10 h-10 border border-white/10 flex items-center justify-center hover:bg-[#0083C9] transition-colors"
-              >
-                <Instagram size={18} />
-              </a>
-              <a
-                href="#"
-                aria-label="Follow us on Facebook"
-                className="w-10 h-10 border border-white/10 flex items-center justify-center hover:bg-[#0083C9] transition-colors"
-              >
-                <Facebook size={18} />
-              </a>
-              <a
-                href="#"
-                aria-label="Connect on LinkedIn"
-                className="w-10 h-10 border border-white/10 flex items-center justify-center hover:bg-[#0083C9] transition-colors"
-              >
-                <Linkedin size={18} />
-              </a>
-              <a
-                href="#"
-                aria-label="Watch on YouTube"
-                className="w-10 h-10 border border-white/10 flex items-center justify-center hover:bg-[#0083C9] transition-colors"
-              >
-                <Youtube size={18} />
-              </a>
-            </div>
           </div>
 
           {/* Activities */}
           <div>
-            <h4 className="text-sm font-bold tracking-widest text-[#0083C9] mb-8 uppercase">
+            <h2 className="text-sm font-bold tracking-widest text-[#0083C9] mb-8 uppercase">
               Key Activities
-            </h4>
+            </h2>
             <ul className="space-y-4 text-gray-400 text-sm">
               <li>Natural Grass Sports Field Construction</li>
               <li>Artificial Grass Sports Field Construction</li>
@@ -87,9 +56,9 @@ export const Footer: FC = () => {
 
           {/* Certifications */}
           <div>
-            <h4 className="text-sm font-bold tracking-widest text-[#0083C9] mb-8 uppercase">
+            <h2 className="text-sm font-bold tracking-widest text-[#0083C9] mb-8 uppercase">
               ISO Certifications
-            </h4>
+            </h2>
             <ul className="space-y-4 text-gray-400 text-sm">
               {ISO_CERTIFICATIONS.map((cert) => (
                 <li key={cert.code}>
@@ -102,9 +71,9 @@ export const Footer: FC = () => {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-sm font-bold tracking-widest text-[#0083C9] mb-8 uppercase">
+            <h2 className="text-sm font-bold tracking-widest text-[#0083C9] mb-8 uppercase">
               Locations & Contact
-            </h4>
+            </h2>
             <ul className="space-y-5 text-gray-400 text-sm">
 
               {/* Address */}
@@ -136,10 +105,10 @@ export const Footer: FC = () => {
               <li className="flex gap-3">
                 <Mail size={18} className="text-[#0083C9] shrink-0 mt-0.5" />
                 <a
-                  href="mailto:info@fsmsbh.com"
+                  href={`mailto:${COMPANY_INFO.email}`}
                   className="hover:text-[#0083C9] transition-colors break-all"
                 >
-                  info@fsmsbh.com
+                  {COMPANY_INFO.email}
                 </a>
               </li>
 

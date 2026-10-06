@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Sprout, HelpCircle, CheckCircle2, ArrowRight, Layers, Maximize2, Sparkles, ExternalLink } from 'lucide-react';
+import ResponsiveImage from './media/ResponsiveImage';
 
 interface HybridGrassShowcaseProps {
   getImgUrl?: (path: string | undefined) => string;
@@ -64,16 +65,17 @@ export default function HybridGrassShowcase({ getImgUrl = (path) => path || '' }
           <div>
             <span className="text-xs font-bold text-gray-400 tracking-[0.2em] uppercase block md:text-right">Product Standard</span>
             <h2 className="text-lg md:text-2xl font-bold text-gray-700 tracking-wide font-sans">
-              What is HYBRIDGRASS System
+              Hybrid Grass Systems for Football Pitches
             </h2>
           </div>
         </div>
 
         {/* Stunning Real-World Installation Visual Showcase */}
         <div className="mb-16 overflow-hidden rounded-[40px] relative h-[420px] md:h-[500px] shadow-2xl group border border-gray-100">
-          <img
-            src={getImgUrl('/src/assets/images/highly_visible_hybrid_grass_1781680138763.jpg')}
+          <ResponsiveImage
+            src="/src/assets/images/highly_visible_hybrid_grass_1781680138763.jpg"
             alt="Advanced Hybrid Turf Brushing & Topdressing Detail with highly visible grass"
+            sizes="(min-width: 1024px) 1182px, calc(100vw - 48px)"
             referrerPolicy="no-referrer"
             className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
           />
@@ -105,9 +107,10 @@ export default function HybridGrassShowcase({ getImgUrl = (path) => path || '' }
 
               {/* Core 3D Cutaway Image */}
               <div className="relative aspect-square max-h-[500px] mx-auto flex items-center justify-center">
-                <img
-                  src={getImgUrl('/src/assets/images/hybrid_soil_block_clone_1781513567584.jpg')}
+                <ResponsiveImage
+                  src="/src/assets/images/hybrid_soil_block_clone_1781513567584.jpg"
                   alt="Hybridgrass Soil Cutaway Blueprint"
+                  sizes="(min-width: 1024px) 500px, calc(100vw - 80px)"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-contain rounded-2xl select-none mix-blend-multiply group-hover:scale-[1.02] transition-transform duration-700"
                 />
@@ -143,7 +146,7 @@ export default function HybridGrassShowcase({ getImgUrl = (path) => path || '' }
                           className="absolute bottom-10 left-1/2 -translate-x-1/2 z-40 w-64 bg-slate-900 text-white rounded-2xl p-4 border border-white/10 shadow-xl pointer-events-none"
                         >
                           <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-3 h-3 bg-slate-900 border-r border-b border-white/10 transform rotate-45"></div>
-                          <h4 className="text-xs font-black tracking-wider uppercase text-[#36B649] mb-1.5">{spot.title}</h4>
+                          <p className="text-xs font-black tracking-wider uppercase text-[#36B649] mb-1.5">{spot.title}</p>
                           <p className="text-[11px] text-gray-300 leading-relaxed font-normal">{spot.desc}</p>
                         </motion.div>
                       )}
@@ -163,9 +166,10 @@ export default function HybridGrassShowcase({ getImgUrl = (path) => path || '' }
             {/* Bottom Inset Box: Backing Detail Exhibit */}
             <div className="bg-gray-50 border border-gray-150 rounded-[32px] p-6 flex flex-col sm:flex-row gap-6 items-center shadow-md">
               <div className="w-24 h-24 shrink-0 rounded-2xl overflow-hidden border border-gray-200 shadow-inner bg-white group/backing relative">
-                <img
-                  src={getImgUrl('/src/assets/images/hybrid_backing_detail_1781513147278.jpg')}
+                <ResponsiveImage
+                  src="/src/assets/images/hybrid_backing_detail_1781513147278.jpg"
                   alt="Patented open voids detail closeup"
+                  sizes="96px"
                   referrerPolicy="no-referrer"
                   className="w-full h-full object-cover group-hover/backing:scale-115 transition-transform duration-500"
                 />
@@ -197,7 +201,7 @@ export default function HybridGrassShowcase({ getImgUrl = (path) => path || '' }
               </div>
 
               {/* Bullet list with custom styled empty circles exactly like the brochure photo */}
-              <ul className="space-y-4">
+              <ul data-hybrid-spec="" className="space-y-4">
                 {[
                   'is the optimum natural grass reinforcement system',
                   'consists of high-quality synthetic grass fibers, tufted in a special patented backing incorporating over 50% voids',
@@ -230,7 +234,7 @@ export default function HybridGrassShowcase({ getImgUrl = (path) => path || '' }
               </div>
 
               {/* Bullet list with custom styled empty circles */}
-              <ul className="space-y-4">
+              <ul data-hybrid-spec="" className="space-y-4">
                 {[
                   'Optimum surface coverage',
                   'Great root development and anchorage',
@@ -261,7 +265,7 @@ export default function HybridGrassShowcase({ getImgUrl = (path) => path || '' }
                 <div className="w-8 h-8 rounded-lg bg-[#36B649]/10 text-[#36B649] flex items-center justify-center">
                   <Sparkles size={16} />
                 </div>
-                <h4 className="text-xs font-bold uppercase tracking-widest text-[#36B649]">Bahrain Elite Arena Certified</h4>
+                <h4 className="text-xs font-bold uppercase tracking-widest text-[#36B649]">Hybrid Grass for Sports Pitches</h4>
               </div>
               <p className="text-xs text-gray-600 leading-relaxed">
                 As the leading certified partner of original global sports tech in the Kingdom of Bahrain, Fast & Safe Maintenance Services delivers premium Hybridgrass systems engineered precisely to FIFA Quality Pro tender guidelines. Perfect for national stadiums, school grounds, and custom residential compounds.

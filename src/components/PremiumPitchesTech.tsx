@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Check, Compass, Factory, Hammer, Layers, Cpu, Wind, Droplet, Flame, ArrowRight, ShieldAlert, Shield, Sprout } from 'lucide-react';
+import ResponsiveImage from './media/ResponsiveImage';
+import { backdropImageSet } from '../utils/imageVariants';
 
 interface PremiumPitchesTechProps {
   getImgUrl?: (path: string | undefined) => string;
@@ -209,7 +211,7 @@ export default function PremiumPitchesTech({ getImgUrl }: PremiumPitchesTechProp
       {/* Background Visual Backdrop Image */}
       <div 
         className="absolute inset-0 bg-cover bg-center pointer-events-none opacity-[0.22]"
-        style={{ backgroundImage: `url(${resolveImg('/src/assets/images/sports_engineering_backdrop_1781171108769.png')})` }}
+        style={{ backgroundImage: backdropImageSet('/src/assets/images/sports_engineering_backdrop_1781171108769.png') }}
       />
       {/* Subtle vignettes and glow overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/45 to-zinc-950 opacity-80" />
@@ -224,7 +226,7 @@ export default function PremiumPitchesTech({ getImgUrl }: PremiumPitchesTechProp
             TECHNICAL SPECIFICATIONS GRID
           </span>
           <h2 className="text-3xl md:text-5xl font-black italic tracking-tight uppercase">
-            Advanced Engineered Sports Surface <span className="text-[#36B649]">Technologies</span>
+            Natural & Artificial Football Pitch <span className="text-[#36B649]">Systems</span>
           </h2>
           <p className="text-gray-400 mt-4 text-sm md:text-base leading-relaxed">
             By adapting award-winning field patterns from elite international arenas, we deliver custom high-performance pitch technology engineered specifically for the Kingdom of Bahrain. Discover our interactive technology suite and single-source delivery pipeline.
@@ -304,9 +306,9 @@ export default function PremiumPitchesTech({ getImgUrl }: PremiumPitchesTechProp
                         <Icon size={20} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className={`font-bold text-sm tracking-wide transition-colors truncate ${isSelected ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>
+                        <span className={`block font-bold text-sm tracking-wide transition-colors truncate ${isSelected ? 'text-white' : 'text-gray-300 group-hover:text-white'}`}>
                           {sys.name}
-                        </h4>
+                        </span>
                         <p className="text-[10px] text-zinc-500 font-mono mt-1 truncate">
                           {sys.tagline}
                         </p>
@@ -409,9 +411,10 @@ export default function PremiumPitchesTech({ getImgUrl }: PremiumPitchesTechProp
                   {/* Right Premium Illustration/Image Preview (5 cols) */}
                   <div className="md:col-span-5 space-y-4">
                     <div className="relative rounded-2xl overflow-hidden aspect-[4/3] w-full border border-white/10 group-hover:border-white/20 shadow-xl bg-zinc-900 group">
-                      <img
-                        src={resolveImg(activeSystem.image)}
+                      <ResponsiveImage
+                        src={activeSystem.image}
                         alt={activeSystem.name}
+                        sizes="(min-width: 768px) 264px, calc(100vw - 48px)"
                         className="w-full h-full object-cover select-none transition-transform duration-700 hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />

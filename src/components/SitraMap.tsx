@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { MapPin, Navigation, Clock, Phone, Mail, ExternalLink } from 'lucide-react';
+import { COMPANY_INFO } from '../constants';
 
 export default function SitraMap() {
   const [isHovered, setIsHovered] = useState(false);
@@ -22,7 +23,7 @@ export default function SitraMap() {
             PHYSICAL DEPLOYMENT CENTER
           </span>
           <h2 className="text-3xl md:text-4xl font-black italic tracking-tight text-white uppercase">
-            Sitra Regional <span className="text-[#36B649]">Office & Estimating</span> Depot
+            Contact Fast & Safe in <span className="text-[#36B649]">Sitra, Bahrain</span>
           </h2>
           <div className="w-20 h-1 bg-[#0083C9] mt-4" />
         </div>
@@ -74,9 +75,9 @@ export default function SitraMap() {
                     <Phone size={14} className="text-[#0083C9]" />
                     <span>+973 39354111</span>
                   </a>
-                  <a href="mailto:info@fsmsbh.com" className="flex items-center gap-3 text-xs text-gray-300 hover:text-[#0083C9] transition-colors font-mono">
+                  <a href={`mailto:${COMPANY_INFO.email}`} className="flex items-center gap-3 text-xs text-gray-300 hover:text-[#0083C9] transition-colors font-mono">
                     <Mail size={14} className="text-[#0083C9]" />
-                    <span>info@fsmsbh.com</span>
+                    <span>{COMPANY_INFO.email}</span>
                   </a>
                 </div>
               </div>

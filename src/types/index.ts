@@ -23,6 +23,8 @@ export interface Project {
  */
 export interface Expertise {
   name: string;
+  /** Visible card/modal label. `name` stays the lookup and storage key. */
+  displayName?: string;
   icon: LucideIcon;
   image: string;
   desc: string;
@@ -58,6 +60,8 @@ export interface CaseStudy {
 /**
  * Consultation form submission
  */
+export type ContactMethod = 'WhatsApp' | 'Phone Call' | 'Email Channel';
+
 export interface ConsultationForm {
   name: string;
   email: string;
@@ -65,10 +69,13 @@ export interface ConsultationForm {
   company: string;
   location: string;
   timeline: string;
-  contactMethod: 'WhatsApp' | 'Phone Call' | 'Email Channel';
+  contactMethod: ContactMethod;
   message: string;
   service: string;
 }
+
+/** Form fields owned by App state. Service is selected separately. */
+export type ConsultationFormState = Omit<ConsultationForm, 'service'>;
 
 /**
  * Attached photo for consultation

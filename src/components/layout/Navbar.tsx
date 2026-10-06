@@ -18,9 +18,9 @@ export const Navbar: FC<NavbarProps> = ({ isMenuOpen, setIsMenuOpen, onConsultat
   const isScrolled = useScroll(50);
 
   return (
-    <>
-      {/* Desktop/Tablet Navbar */}
+    <header>
       <nav
+        aria-label="Primary"
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
             ? 'bg-black/90 backdrop-blur-md py-3 shadow-lg'
@@ -85,18 +85,23 @@ export const Navbar: FC<NavbarProps> = ({ isMenuOpen, setIsMenuOpen, onConsultat
 
           {/* Mobile Menu Trigger */}
           <button
+            type="button"
             className="lg:hidden text-white"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={isMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMenuOpen && (
-          <motion.div
+          <motion.nav
+            id="mobile-navigation"
+            aria-label="Mobile"
             initial={{ opacity: 0, x: '100%' }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
@@ -125,10 +130,10 @@ export const Navbar: FC<NavbarProps> = ({ isMenuOpen, setIsMenuOpen, onConsultat
                 REQUEST CONSULTATION
               </button>
             </div>
-          </motion.div>
+          </motion.nav>
         )}
       </AnimatePresence>
-    </>
+    </header>
   );
 };
 

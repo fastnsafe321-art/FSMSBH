@@ -19,10 +19,19 @@ import {
   Volume2,
   VolumeX
 } from 'lucide-react';
+import ResponsiveImage from './media/ResponsiveImage';
 
 interface SubAirVentShowcaseProps {
   getImgUrl?: (path: string | undefined) => string;
   triggerConsultation?: (serviceName?: string, customMessage?: string) => void;
+}
+
+/** Deterministic 0..1 from stable integer inputs. Does not call Math.random. */
+function particleUnit(bucket: number, index: number): number {
+  let n = (Math.imul(bucket, 374761393) + Math.imul(index + 1, 668265263)) >>> 0;
+  n = Math.imul(n ^ (n >>> 16), 2246822507) >>> 0;
+  n = Math.imul(n ^ (n >>> 13), 3266489909) >>> 0;
+  return ((n ^ (n >>> 16)) >>> 0) / 4294967296;
 }
 
 export default function SubAirVentShowcase({ 
@@ -397,7 +406,7 @@ export default function SubAirVentShowcase({
           </div>
           
           <h2 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-tight">
-            How <span className="text-emerald-500 italic block sm:inline">SubAir</span> Technology Works
+            Football Pitch Drainage & <span className="text-emerald-500 italic block sm:inline">Root-Zone Aeration</span>
           </h2>
           
           <p className="mt-4 text-slate-600 text-sm md:text-base leading-relaxed max-w-2xl mx-auto">
@@ -614,7 +623,7 @@ export default function SubAirVentShowcase({
                       {simMode === 'vacuum' && (activeDrainagePhase === 'all' || activeDrainagePhase === 'precipitation') && (
                         <div className="absolute inset-0 overflow-hidden pointer-events-none">
                           {[...Array(24)].map((_, i) => {
-                            const left = (i * 4.2) + Math.random() * 2;
+                            const left = (i * 4.2) + particleUnit(1, i) * 2;
                             return (
                               <motion.div
                                 key={`rain-v-2d-${i}`}
@@ -662,8 +671,8 @@ export default function SubAirVentShowcase({
                       {simMode === 'vacuum' && (activeDrainagePhase === 'all' || activeDrainagePhase === 'filtration') && (
                         <div className="absolute inset-0 overflow-hidden">
                           {[...Array(16)].map((_, i) => {
-                            const left = (i * 6.2) + Math.random() * 2;
-                            const delay = Math.random() * 1.6;
+                            const left = (i * 6.2) + particleUnit(2, i) * 2;
+                            const delay = particleUnit(3, i) * 1.6;
                             return (
                               <motion.div
                                 key={`percolate-2d-${i}`}
@@ -750,8 +759,8 @@ export default function SubAirVentShowcase({
                       {simMode === 'vacuum' && (activeDrainagePhase === 'all' || activeDrainagePhase === 'filtration' || activeDrainagePhase === 'suction') && (
                         <div className="absolute inset-0 pointer-events-none">
                           {[...Array(14)].map((_, i) => {
-                            const left = 6 + (i * 7.4) + Math.random() * 2;
-                            const delay = Math.random() * 1.4;
+                            const left = 6 + (i * 7.4) + particleUnit(4, i) * 2;
+                            const delay = particleUnit(5, i) * 1.4;
                             return (
                               <motion.div
                                 key={`gravel-percolation-dr-2d-${i}`}
@@ -801,9 +810,10 @@ export default function SubAirVentShowcase({
                   className="relative rounded-[28px] overflow-hidden bg-slate-950 p-1 border border-slate-200/80 shadow-2xl flex-1 flex flex-col justify-center min-h-[360px]"
                 >
                   <div className="relative aspect-video rounded-[24px] overflow-hidden bg-zinc-900 h-full">
-                    <img 
-                      src={getImgUrl('/src/assets/images/sub_air_clean_system_1781693372407.jpg')} 
-                      alt="High Tech SubAir Under-Soil Ventilation Architecture" 
+                    <ResponsiveImage
+                      src="/src/assets/images/sub_air_clean_system_1781693372407.jpg"
+                      alt="High Tech SubAir Under-Soil Ventilation Architecture"
+                      sizes="(min-width: 1024px) 566px, calc(100vw - 48px)"
                       className="w-full h-full object-cover opacity-95 transition-transform duration-[1200ms] hover:scale-105"
                     />
                     
@@ -822,7 +832,7 @@ export default function SubAirVentShowcase({
                                   key={`air-${i}`}
                                   animate={{ y: [-40, -180], opacity: [0, 1, 0] }}
                                   transition={{
-                                    duration: 1.6 + Math.random() * 0.6,
+                                    duration: 1.6 + particleUnit(6, i) * 0.6,
                                     repeat: Infinity,
                                     delay: i * 0.2,
                                   }}
@@ -847,10 +857,10 @@ export default function SubAirVentShowcase({
                               {(activeDrainagePhase === 'all' || activeDrainagePhase === 'precipitation') && (
                                 <>
                                   {[...Array(45)].map((_, i) => {
-                                    const left = (i * 2.2) + (Math.random() * 1.5);
-                                    const duration = 0.35 + Math.random() * 0.25;
-                                    const delay = Math.random() * 1.2;
-                                    const height = 25 + Math.random() * 35;
+                                    const left = (i * 2.2) + (particleUnit(7, i) * 1.5);
+                                    const duration = 0.35 + particleUnit(8, i) * 0.25;
+                                    const delay = particleUnit(9, i) * 1.2;
+                                    const height = 25 + particleUnit(10, i) * 35;
                                     return (
                                       <motion.div
                                         key={`rain-p1-${i}`}
@@ -863,9 +873,9 @@ export default function SubAirVentShowcase({
                                     );
                                   })}
                                   {[...Array(12)].map((_, i) => {
-                                    const left = 8 + Math.random() * 84;
-                                    const top = 34 + Math.random() * 8;
-                                    const delay = Math.random() * 1.4;
+                                    const left = 8 + particleUnit(11, i) * 84;
+                                    const top = 34 + particleUnit(12, i) * 8;
+                                    const delay = particleUnit(13, i) * 1.4;
                                     return (
                                       <motion.div
                                         key={`splash-p1-${i}`}
@@ -883,9 +893,9 @@ export default function SubAirVentShowcase({
                               {(activeDrainagePhase === 'all' || activeDrainagePhase === 'filtration') && (
                                 <div className="absolute inset-0">
                                   {[...Array(18)].map((_, i) => {
-                                    const left = 10 + (i * 4.6) + Math.random() * 2;
-                                    const duration = 1.4 + Math.random() * 0.8;
-                                    const delay = Math.random() * 0.8;
+                                    const left = 10 + (i * 4.6) + particleUnit(14, i) * 2;
+                                    const duration = 1.4 + particleUnit(15, i) * 0.8;
+                                    const delay = particleUnit(16, i) * 0.8;
                                     return (
                                       <motion.div
                                         key={`filter-drop-${i}`}
@@ -929,12 +939,12 @@ export default function SubAirVentShowcase({
                                     })}
                                   </svg>
                                   {[...Array(15)].map((_, i) => {
-                                    const startLeft = 20 + Math.random() * 50;
+                                    const startLeft = 20 + particleUnit(17, i) * 50;
                                     const targetLeft = startLeft < 48 ? 44 : 57;
-                                    const startTop = 46 + Math.random() * 8;
-                                    const targetTop = 53 + Math.random() * 5;
-                                    const duration = 0.7 + Math.random() * 0.4;
-                                    const delay = Math.random() * 1.2;
+                                    const startTop = 46 + particleUnit(18, i) * 8;
+                                    const targetTop = 53 + particleUnit(19, i) * 5;
+                                    const duration = 0.7 + particleUnit(20, i) * 0.4;
+                                    const delay = particleUnit(21, i) * 1.2;
                                     return (
                                       <motion.div
                                         key={`suction-particle-${i}`}
@@ -956,9 +966,9 @@ export default function SubAirVentShowcase({
                               {(activeDrainagePhase === 'all' || activeDrainagePhase === 'discharge') && (
                                 <div className="absolute inset-0">
                                   {[...Array(12)].map((_, i) => {
-                                    const top = 54 + (i * 2) + (Math.random() ? 1 : 0);
-                                    const duration = 0.5 + Math.random() * 0.3;
-                                    const delay = Math.random() * 0.9;
+                                    const top = 54 + (i * 2) + 1;
+                                    const duration = 0.5 + particleUnit(23, i) * 0.3;
+                                    const delay = particleUnit(24, i) * 0.9;
                                     return (
                                       <motion.div
                                         key={`discharge-stream-${i}`}
@@ -1011,9 +1021,9 @@ export default function SubAirVentShowcase({
               <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
                 <div className="space-y-0.5">
                   <span className="text-[10px] font-black text-slate-400 tracking-[0.15em] uppercase block">Interactive Technical Walkthrough</span>
-                  <h4 className="text-sm font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wide">
+                  <h3 className="text-sm font-bold text-slate-800 flex items-center gap-1.5 uppercase tracking-wide">
                     <Droplet size={15} className="text-blue-500 animate-bounce" /> How the Advanced Drainage Animation Cycles
-                  </h4>
+                  </h3>
                 </div>
 
                 <button
@@ -1097,7 +1107,7 @@ export default function SubAirVentShowcase({
                         <Icon size={12} className={isActive ? 'animate-pulse' : 'text-slate-400 group-hover:scale-110 transition-transform'} />
                       </div>
                       <div>
-                        <h5 className="text-[11px] font-bold tracking-tight uppercase leading-none mb-0.5">{phase.title}</h5>
+                        <span className="block text-[11px] font-bold tracking-tight uppercase leading-none mb-0.5">{phase.title}</span>
                         <p className={`text-[10px] leading-tight font-sans ${isActive ? 'text-white/70' : 'text-slate-500'}`}>{phase.desc}</p>
                       </div>
                     </button>
@@ -1131,7 +1141,7 @@ export default function SubAirVentShowcase({
               </div>
               <div className="space-y-1">
                 <span className="text-[10px] font-black tracking-wider text-emerald-400 uppercase block">Automatic Automation</span>
-                <h4 className="text-base font-extrabold text-white uppercase tracking-wide">Smart System Optimization</h4>
+                <h3 className="text-base font-extrabold text-white uppercase tracking-wide">Smart System Optimization</h3>
                 <p className="text-xs text-slate-400 leading-relaxed font-sans">
                   Automatically switches between vacuum and pressure modes based on pitch conditions to maintain ideal air, water, and temperature.
                 </p>
@@ -1205,7 +1215,7 @@ export default function SubAirVentShowcase({
         {/* BOTTOM SECTION: KEY BENEFITS */}
         <div className="bg-white border border-slate-150 p-8 rounded-[32px] shadow-lg">
           <div className="text-center mb-8">
-            <h4 className="text-xs font-black tracking-[0.25em] text-slate-400 uppercase">Key Benefits of SubAir Technology</h4>
+            <h3 className="text-xs font-black tracking-[0.25em] text-slate-400 uppercase">Key Benefits of SubAir Technology</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
             {benefits.map((b, i) => {
@@ -1215,7 +1225,7 @@ export default function SubAirVentShowcase({
                   <div className={`w-12 h-12 rounded-full ${b.bgColor} ${b.color} flex items-center justify-center mb-3 shadow-inner`}>
                     <IconComp size={22} className="stroke-[2.5]" />
                   </div>
-                  <h5 className="text-xs font-black text-slate-900 uppercase tracking-wide mb-1 leading-tight">{b.title}</h5>
+                  <h4 className="text-xs font-black text-slate-900 uppercase tracking-wide mb-1 leading-tight">{b.title}</h4>
                   <p className="text-[11px] text-slate-500 leading-relaxed font-sans">{b.desc}</p>
                 </div>
               );

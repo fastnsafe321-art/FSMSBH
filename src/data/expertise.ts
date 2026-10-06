@@ -7,10 +7,11 @@ import { Expertise } from '../types';
  */
 export const EXPERTISE: Expertise[] = [
   { 
-    name: 'ARTIFICIAL GRASS INSTALLATION', 
+    name: 'ARTIFICIAL GRASS INSTALLATION',
+    displayName: 'Artificial Football Turf Installation',
     icon: Layers,
     image: '/src/assets/images/artificial_turf_macro_1779106602495.png', 
-    desc: 'Professional synthetic turf systems for sports and leisure.',
+    desc: 'Artificial grass installation in Bahrain, including artificial football turf installation and football turf replacement for sports facilities.',
     detailedDesc: 'Our artificial grass solutions are engineered to strict ISO 9001:2015 and ISO 14001:2015 international standards for premium quality, environmental safety, and high-tier performance. We conduct rigorous quality inspection loops, utilizing ISO-certified raw synthetic fibers and specialized sub-base engineering for elite competition fields.',
     features: [
       'FIFA Quality Pro Certified Surfaces',
@@ -74,10 +75,11 @@ export const EXPERTISE: Expertise[] = [
     ]
   },
   { 
-    name: 'NATURAL GRASS INSTALLATION', 
+    name: 'NATURAL GRASS INSTALLATION',
+    displayName: 'Natural Grass Pitch Installation',
     icon: Sprout,
     image: '/src/assets/images/irrigated_sports_pitch_1779108101974.png', 
-    desc: 'Top-tier natural turf solutions for professional pitches.',
+    desc: 'Natural grass pitch installation in Bahrain for natural grass football pitches, with ground preparation, rootzone construction and irrigation.',
     detailedDesc: 'Specializing in professional sports turf management, we provide highest-grade natural grass installation including soil analysis, irrigation design, and laser-guided leveling for elite competition surfaces.',
     features: [
       'Bermuda Hybrid Cultivars',
@@ -150,7 +152,7 @@ export const EXPERTISE: Expertise[] = [
     name: 'FENCING WORKS', 
     icon: Shield,
     image: '/src/assets/images/fence1.jpeg', 
-    desc: 'Secure perimeter and sports-specific fencing solutions.',
+    desc: 'Fencing works in Bahrain, including perimeter fencing and sports safety netting for facilities and athletic sites.',
     detailedDesc: 'We provide heavy-duty security and sports fencing systems. Our solutions range from anti-climb palisade fencing for industrial facilities to high-impact safety netting for athletic stadiums.',
     features: [
       'Galvanized & Powder Coated Steel',
@@ -182,7 +184,7 @@ export const EXPERTISE: Expertise[] = [
     name: 'BUILDING CONSTRUCTION', 
     icon: Building,
     image: '/src/assets/images/build4.jpeg', 
-    desc: 'Comprehensive civil works and turnkey building projects.',
+    desc: 'Building construction in Bahrain, covering comprehensive civil works and turnkey construction.',
     detailedDesc: 'From shoring and excavation to structural concrete and turnkey delivery, our civil engineering department handles complex building projects with a zero-incident safety commitment.',
     features: [
       'Advanced Shoring & Deep Excavation',
@@ -213,7 +215,7 @@ export const EXPERTISE: Expertise[] = [
     name: 'HORSE WALKER INSTALLATION', 
     icon: RotateCw,
     image: '/src/assets/images/bahrain_horse_walker_1779781871906.png',
-    desc: 'Specialized industrial equine exercise systems.',
+    desc: 'Horse walker installation in Bahrain for specialized industrial equine exercise systems.',
     detailedDesc: 'We install premium automated horse walkers and equine fitness systems. Our designs emphasize horse safety, durable industrial electronics, and custom non-slip flooring.',
     features: [
       'Automated Variable Speed Control',
@@ -237,7 +239,7 @@ export const EXPERTISE: Expertise[] = [
     name: 'SWIMMING POOL CONSTRUCTION', 
     icon: Waves,
     image: '/src/assets/images/swim5.jpeg', 
-    desc: 'Professional concrete pool shells and turnkey aquatic works.',
+    desc: 'Swimming pool construction in Bahrain, covering professional concrete pool shells and turnkey aquatic works.',
     detailedDesc: 'Our swimming pool division handles complete construction from structural concrete shells to advanced filtration systems and artistic tile finishes for luxury residences and hotels.',
     features: [
       'Reinforced Concrete Pool Shells',
@@ -271,7 +273,7 @@ export const EXPERTISE: Expertise[] = [
     name: 'CARPENTRY & WOOD WORKS', 
     icon: Hammer,
     image: '/src/assets/images/carp6.jpeg', 
-    desc: 'High-end custom woodwork and precision carpentry installations.',
+    desc: 'Carpentry and wood works in Bahrain, including precision carpentry installations and custom woodwork.',
     detailedDesc: 'Our custom carpentry and woodwork division provides high-durability timber structures, deckings, structural frameworks, and bespoke wood details for equestrian, residential, and commercial complexes.',
     features: [
       'Bespoke Timber Joinery & Decking',

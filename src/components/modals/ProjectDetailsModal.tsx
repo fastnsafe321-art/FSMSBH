@@ -2,7 +2,7 @@ import React, { FC, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
 import { Project } from '../../types';
-import { getImgUrl } from '../../utils';
+import ResponsiveImage from '../media/ResponsiveImage';
 
 interface Props {
   project: Project | null;
@@ -47,14 +47,17 @@ const ProjectDetailsModal: FC<Props> = ({ project, onClose, onInquire }) => {
         >
           {/* ── HERO IMAGE ── */}
           <div className="relative h-56 shrink-0 overflow-hidden">
-            <img
-              src={getImgUrl(project.image)}
+            <ResponsiveImage
+              src={project.image}
               alt={project.title}
+              sizes="(min-width: 768px) 896px, 100vw"
               className="w-full h-full object-cover"
             />
             {/* Close */}
             <button
+              type="button"
               onClick={onClose}
+              aria-label="Close modal"
               className="absolute top-4 right-4 w-9 h-9 bg-white rounded-full flex items-center justify-center shadow-md hover:bg-gray-100 transition-colors"
             >
               <X size={16} className="text-gray-800" />
@@ -109,9 +112,10 @@ const ProjectDetailsModal: FC<Props> = ({ project, onClose, onInquire }) => {
                             onClick={() => setEnlargedImage(img)}
                             className="overflow-hidden rounded-lg cursor-pointer group"
                           >
-                            <img
-                              src={getImgUrl(img)}
+                            <ResponsiveImage
+                              src={img}
                               alt={`${project.title} Exhibit ${idx + 1}`}
+                              sizes="(min-width: 768px) 400px, 50vw"
                               className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                             <p className="text-xs text-gray-400 mt-1.5 font-medium truncate">
@@ -182,15 +186,20 @@ const ProjectDetailsModal: FC<Props> = ({ project, onClose, onInquire }) => {
               >
                 <X size={20} />
               </button>
-              <motion.img
+              <motion.div
                 initial={{ scale: 0.9 }}
                 animate={{ scale: 1 }}
                 exit={{ scale: 0.9 }}
-                src={getImgUrl(enlargedImage)}
-                alt="Enlarged view"
-                className="max-w-full max-h-full object-contain rounded-2xl"
+                className="max-w-full max-h-full"
                 onClick={(e) => e.stopPropagation()}
-              />
+              >
+                <ResponsiveImage
+                  src={enlargedImage}
+                  alt="Enlarged view"
+                  sizes="90vw"
+                  className="max-w-full max-h-full object-contain rounded-2xl"
+                />
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

@@ -12,10 +12,10 @@ export const AboutSection: FC = () => {
         <div className="flex flex-col lg:flex-row gap-16 items-center">
           {/* Left Content */}
           <div className="lg:w-1/2">
-            <h2 className="text-sm font-bold tracking-[0.3em] text-[#0083C9] mb-4">
+            <p className="text-sm font-bold tracking-[0.3em] text-[#0083C9] mb-4">
               WHO WE ARE
-            </h2>
-            <h3 className="text-4xl font-bold mb-6">Expertise in Construction & Engineering</h3>
+            </p>
+            <h2 className="text-4xl font-bold mb-6">Fast & Safe Maintenance Services in Bahrain</h2>
             <p className="text-gray-600 leading-relaxed mb-6">
               Headquartered in {COMPANY_INFO.location}, {COMPANY_INFO.fullName} offers a elite
               complement of construction and engineering services—specializing in premium sports turf
@@ -55,7 +55,7 @@ export const AboutSection: FC = () => {
                   <span className="text-xs uppercase tracking-[0.2em] font-bold text-[#0083C9]">
                     Integrated Management System
                   </span>
-                  <h4 className="text-lg font-bold">ISO Certified Excellence</h4>
+                  <h3 className="text-lg font-bold">ISO Certified Excellence</h3>
                 </div>
               </div>
               <p className="text-sm text-gray-600 leading-relaxed mb-6">
@@ -99,7 +99,7 @@ export const AboutSection: FC = () => {
                   <span className="text-[9px] font-extrabold tracking-widest text-[#0083C9] uppercase">
                     Regulatory Baseline
                   </span>
-                  <h4 className="font-bold text-gray-800 text-sm mt-1">HSE Site Safety</h4>
+                  <h3 className="font-bold text-gray-800 text-sm mt-1">HSE Site Safety</h3>
                 </div>
                 <p className="text-xs text-gray-500 mt-2 leading-relaxed">
                   Continuous structural checks & certified safety-rigging supervision.
@@ -110,7 +110,7 @@ export const AboutSection: FC = () => {
                   <span className="text-[9px] font-extrabold tracking-widest text-white/60 uppercase">
                     Operational Record
                   </span>
-                  <h4 className="font-bold text-sm mt-1">ZERO ACCIDENTS</h4>
+                  <h3 className="font-bold text-sm mt-1">ZERO ACCIDENTS</h3>
                 </div>
                 <p className="text-xs text-white/80 mt-2 leading-relaxed">
                   Our proud track record across elite youth centres, sports hubs, and industrial sites.
